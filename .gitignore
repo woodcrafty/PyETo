@@ -1,0 +1,7 @@
+*.pyc
+*.pyo
+*.egg-ignore
+.idea
+__pycache__
+dist
+build
