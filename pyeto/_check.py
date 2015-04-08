@@ -4,10 +4,11 @@ Internal validation functions.
 :copyright: (c) 2015 by Mark Richards.
 :license: BSD 3-Clause, see LICENSE.txt for more details.
 """
+from pyeto.convert import degrees2radians
 
 # Internal constants
-_MINLAT_RADIANS = deg2rad(-90.0)
-_MAXLAT_RADIANS = deg2rad(90.0)
+_MINLAT_RADIANS = degrees2radians(-90.0)
+_MAXLAT_RADIANS = degrees2radians(90.0)
 
 
 def check_doy(doy):
@@ -18,10 +19,8 @@ def check_doy(doy):
         raise ValueError(
             'Day of the year (doy) must be in range 1-366: {0!r}'.format(doy))
 
-check_angle_radians()
-
 def check_latitude_in_radians(latitude):
-     if not _MINLAT_RADIANS <= lat <= _MAXLAT_RADIANS:
+     if not _MINLAT_RADIANS <= latitude <= _MAXLAT_RADIANS:
         raise ValueError(
             'latitude outside of valid range: {0!r} radians'.format(latitude))
 
