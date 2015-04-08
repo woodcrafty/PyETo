@@ -8,11 +8,11 @@ PyETo
 :Status: Pre-alpha
 
 *PyETo* is a Python library for calculating reference evapotranspiration
-(ETo), sometimes referred to as potential evapotranspiration (PET). The
+(ET\ :sub:`o`\ ), sometimes referred to as potential evapotranspiration (PET). The
 library provides numerous functions for estimating missing meteorological
 data.
 
-Three methods for estimating ETo/PET are implemented:
+Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
 
 1. FAO Penman-Monteith (Allen et al, 1998)
 2. Hargreaves (Hargreaves and Samani, 1982; 1985)

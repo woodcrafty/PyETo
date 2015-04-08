@@ -6,17 +6,18 @@ It is recommended that you familiarise yourself with chapters 1 to 4 of
 Allen et al (1998) before proceeding.
 
 The data required to calculate the daily, ten-day or monthly
-evapotranspiration over grass using the FAO Penman-Monteith equation are
-specified below. If measured meteorological data are not available, many of
-the variables can be estimated using functions in the library.
+evapotranspiration over grass (ET\ :sub:`o`\ )using the FAO Penman-Monteith
+equation are specified below. If measured meteorological data are not
+available, many of the variables can be estimated using functions in the
+library.
 
 ------------------------------
 Monthly (or ten-day) time step
 ------------------------------
-The value of ETo calculated with mean monthly weather data is very similar to
-the average of the daily ETo values calculated with average weather data for
-that month. The following data are required (if using a ten-day period
-substitute the words 'ten-day' in place of 'monthly'):
+The value of ET\ :sub:`o`\  calculated with mean monthly weather data is very
+similar to the average of the daily ET\ :sub:`o`\  values calculated with
+average weather data for that month. The following data are required (if
+using a ten-day period substitute the words 'ten-day' in place of 'monthly'):
 
 * monthly average daily minimum and maximum temperature
 * monthly average of actual vapour pressure derived from psychrometric,
@@ -35,7 +36,7 @@ substitute the words 'ten-day' in place of 'monthly'):
 ---------------
 Daily time step
 ---------------
-For daily ETo estimates the required meteorological data are:
+For daily ET\ :sub:`o`\  estimates the required meteorological data are:
 
 * minimum and maximum daily air temperature
 * mean daily actual vapour pressure derived from psychrometric, dewpoint
@@ -51,7 +52,7 @@ For daily ETo estimates the required meteorological data are:
   steps though if you wish you can calculate it using the
   daily soil_heat_flux() function.
 
-To calculate ETo using ``fao_penman_monteith()`` gather the data
+To calculate ET\ :sub:`o`\  using ``fao_penman_monteith()`` gather the data
 necessary for the function's arguments. It is best to provide measured
 values for the inputs if possible, but if some of the data is not
 available then use one of the 'missing-data' functions to estimate the input.

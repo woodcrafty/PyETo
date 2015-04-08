@@ -1,7 +1,7 @@
 ========
 Overview
 ========
-Three methods for estimating ETo/PET are implemented:
+Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
 
 1. FAO Penman-Monteith (Allen et al, 1998)
 2. Hargreaves (Hargreaves and Samani, 1982; 1985)
@@ -13,17 +13,17 @@ These methods are outlined below.
 FAO Penman-Monteith
 -------------------
 This is the method recommended by the Food and Agriculture Organisation of
-the United Nations (FAO) for estimating ETo for a grass crop using limited
-meteorological data (see Allen et al, 1998).
+the United Nations (FAO) for estimating ET\ :sub:`o` for a grass crop using
+limited meteorological data (see Allen et al, 1998).
 
 The FAO Penman-Monteith equation requires site location, air temperature,
 humidity, radiation and wind speed data for daily, weekly, ten-day or
 monthly ETo calculations.
 
 Before using this method you should familiarise yourself with chapters 1 to 4
-of Allen et al (1998), which provide detailed guidelines for estimating ETo,
-including how to choose appropriate equations for estimating missing
-meteorological data.
+of Allen et al (1998), which provide detailed guidelines for estimating
+ET\ :sub:`o`\ , including how to choose appropriate equations for estimating
+missing meteorological data.
 
 ----------
 Hargreaves
