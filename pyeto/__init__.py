@@ -1,14 +1,14 @@
 
 import pyeto
 
-from .convert import (
+from pyeto.convert import (
     celsius2kelvin,
     kelvin2celsius,
     degrees2radians,
     radians2degrees,
 )
 
-from .fao import (
+from pyeto.fao import (
     atmospheric_pressure,
     clear_sky_radiation,
     daily_mean_t,
@@ -46,7 +46,7 @@ from .fao import (
     wind_speed_2m,
 )
 
-from .thornthwaite import (
+from pyeto.thornthwaite import (
     thornthwaite,
     monthly_mean_daylight_hours,
 )
