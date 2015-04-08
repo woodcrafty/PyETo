@@ -7,9 +7,9 @@ PyETo
 :License: `BSD 3-Clause <http://opensource.org/licenses/BSD-3-Clause>`_
 :Status: Pre-alpha
 
-*PyETo* is a Python library for calculating reference evapotranspiration
-(ET\ :sub:`o`\ ), sometimes referred to as potential evapotranspiration (PET). The
-library provides numerous functions for estimating missing meteorological
+*PyETo* is a Python library for calculating reference crop evapotranspiration
+(ET\ :sub:`o`\ ), sometimes referred to as potential evapotranspiration (PET).
+The library provides numerous functions for estimating missing meteorological
 data.
 
 Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
