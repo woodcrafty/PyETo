@@ -1,2 +1,2 @@
 
-import .test_fao
+from . import test_fao
