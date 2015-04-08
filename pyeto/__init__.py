@@ -1,12 +1,14 @@
 
-from .pyeto.convert import (
+import pyeto
+
+from .convert import (
     celsius2kelvin,
     kelvin2celsius,
     degrees2radians,
     radians2degrees,
 )
 
-from .pyeto.fao import (
+from .fao import (
     atmospheric_pressure,
     clear_sky_radiation,
     daily_mean_t,
@@ -20,7 +22,7 @@ from .pyeto.fao import (
     ea_from_tdew,
     ea_from_twet_tdry,
     es_from_t,
-    energy2equiv_evap,
+    energy2equiv_evaporation,
     et_radiation,
     fao_penman_monteith,
     hargreaves,
@@ -44,7 +46,7 @@ from .pyeto.fao import (
     wind_speed_2m,
 )
 
-from pyeto.thornthwaite import (
+from .thornthwaite import (
     thornthwaite,
     monthly_mean_daylight_hours,
 )
