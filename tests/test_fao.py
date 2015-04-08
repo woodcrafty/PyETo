@@ -8,7 +8,7 @@ Find test values for hargreaves_ETo()
 import unittest
 
 import pyeto
-
+from pyeto import convert
 
 class TestGlobalFunctions(unittest.TestCase):
 
@@ -78,7 +78,8 @@ class TestGlobalFunctions(unittest.TestCase):
 
     def test_et_radiation(self):
         # Test based on example 8, p.80 of FAO paper
-        etrad = pyeto.et_radiation(-20, 0.120, 1.527, 0.985)
+        etrad = pyeto.et_radiation(
+            convert.degrees2radians(-20), 0.120, 1.527, 0.985)
         self.assertAlmostEqual(etrad, 32.2, 1)
 
     def test_hargreaves(self):
@@ -94,7 +95,7 @@ class TestGlobalFunctions(unittest.TestCase):
 
     def test_mean_es(self):
         # Test based on example 3, p.69 of FAO paper
-        mean_es = fao.mean_es(15, 24.5)
+        mean_es = pyeto.mean_es(15, 24.5)
         self.assertAlmostEqual(mean_es, 2.39, 2)
 
     def test_monthly_soil_heat_flux(self):
@@ -108,11 +109,6 @@ class TestGlobalFunctions(unittest.TestCase):
         shf = pyeto.monthly_soil_heat_flux2(14.1, 16.1)
         self.assertAlmostEqual(shf, 0.33, 1)
 
-    def test_net_outgoing_longwave_radiation(self):
-        # Test based on example 11, p.87 of FAO paper
-        lwrad = pyeto.net_out_lw_rad(19.1, 25.1, 14.5, 18.8, 2.1)
-        self.assertAlmostEqual(lwrad, 3.5, 1)
-
     def test_net_radiation(self):
         # Test based on example 16, p.99 of FAO paper
         net_rad = pyeto.net_radiation(16.9, 3.0)
@@ -125,6 +121,17 @@ class TestGlobalFunctions(unittest.TestCase):
         rad = pyeto.net_incoming_solar_radiation(14.5)
         self.assertAlmostEqual(rad, 11.1, 0)
 
+    def test_net_outgoing_longwave_radiation(self):
+        # Test based on example 11, p.87 of FAO paper
+        lwrad = pyeto.net_outgoing_longwave_radiation(
+            tmin=convert.celsius2kelvin(19.1),
+            tmax=convert.celsius2kelvin(25.1),
+            sol_rad=14.5,
+            clear_sky_rad=18.8,
+            ea=2.1
+        )
+        self.assertAlmostEqual(lwrad, 3.5, 1)
+
     def test_fao_penman_monteith(self):
         # Test based on example 17, p.110 (monthly calc) and
         # example 18, p.113 (daily calc) of FAO paper
@@ -133,13 +140,28 @@ class TestGlobalFunctions(unittest.TestCase):
         # Note, due to rounding errors in the FAO's example we can only
         # test to 1 decimal place here!
         eto = pyeto.fao_penman_monteith(
-            14.33, 30.2, 2.0, 4.42, 2.85, 0.246, 0.0674, shf=0.14)
+            Rn=14.33,
+            t=convert.celsius2kelvin(30.2),
+            ws=2.0,
+            es=4.42,
+            ea=2.85,
+            delta_es=0.246,
+            psy=0.0674,
+            shf=0.14,
+        )
         self.assertAlmostEqual(eto, 5.72, 1)
 
         # Daily ETo:
         # (Rn, t, ws, es, ea, delta_es, psy, shf=0.0)
         eto = pyeto.fao_penman_monteith(
-            13.28, 16.9, 2.078, 1.997, 1.409, 0.122, 0.0666)
+            Rn=13.28,
+            t=convert.celsius2kelvin(16.9),
+            ws=2.078,
+            es=1.997,
+            ea=1.409,
+            delta_es=0.122,
+            psy=0.0666
+        )
         self.assertAlmostEqual(eto, 3.9, 1)
 
     def test_psychrometric_const(self):
@@ -190,7 +212,7 @@ class TestGlobalFunctions(unittest.TestCase):
 
     def test_sunset_hour_angle(self):
         # Test based on example 8, p.80 of FAO paper
-        sha = pyeto.sunset_hour_angle(-20, 0.120)
+        sha = pyeto.sunset_hour_angle(convert.degrees2radians(-20), 0.120)
         self.assertAlmostEqual(sha, 1.527, 3)
 
     def test_wind_speed_2m(self):
