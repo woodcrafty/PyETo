@@ -10,5 +10,5 @@ python:
 install:
   - pip install coveralls
 script:
-  - coverage run --source=reck setup.py test
+  - coverage run --source=pyeto setup.py test
 after_success: coveralls
