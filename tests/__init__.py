@@ -1,2 +1,2 @@
 
-import test_fao
+import .test_fao
