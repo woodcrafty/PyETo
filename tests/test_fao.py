@@ -7,6 +7,7 @@ Find test values for hargreaves()
 
 import unittest
 
+import pyeto
 from pyeto import convert
 
 
