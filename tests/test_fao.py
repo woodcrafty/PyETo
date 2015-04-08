@@ -2,15 +2,15 @@
 Unit test script for fao.py
 
 TODO:
-Find test values for hargreaves_ETo()
+Find test values for hargreaves()
 """
 
 import unittest
 
-import pyeto
 from pyeto import convert
 
-class TestGlobalFunctions(unittest.TestCase):
+
+class TestFAO(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -82,6 +82,38 @@ class TestGlobalFunctions(unittest.TestCase):
             convert.degrees2radians(-20), 0.120, 1.527, 0.985)
         self.assertAlmostEqual(etrad, 32.2, 1)
 
+    def test_fao_penman_monteith(self):
+        # Test based on example 17, p.110 (monthly calc) and
+        # example 18, p.113 (daily calc) of FAO paper
+
+        # Monthly ETo:
+        # Note, due to rounding errors in the FAO's example we can only
+        # test to 1 decimal place here!
+        eto = pyeto.fao_penman_monteith(
+            Rn=14.33,
+            t=convert.celsius2kelvin(30.2),
+            ws=2.0,
+            es=4.42,
+            ea=2.85,
+            delta_es=0.246,
+            psy=0.0674,
+            shf=0.14,
+        )
+        self.assertAlmostEqual(eto, 5.72, 1)
+
+        # Daily ETo:
+        # (Rn, t, ws, es, ea, delta_es, psy, shf=0.0)
+        eto = pyeto.fao_penman_monteith(
+            Rn=13.28,
+            t=convert.celsius2kelvin(16.9),
+            ws=2.078,
+            es=1.997,
+            ea=1.409,
+            delta_es=0.122,
+            psy=0.0666
+        )
+        self.assertAlmostEqual(eto, 3.9, 1)
+
     def test_hargreaves(self):
         # Have not yet found data to test against
         #eto = pyeto.hargreaves(tmin, tmax, tmean, Ra)
@@ -131,38 +163,6 @@ class TestGlobalFunctions(unittest.TestCase):
             ea=2.1
         )
         self.assertAlmostEqual(lwrad, 3.5, 1)
-
-    def test_fao_penman_monteith(self):
-        # Test based on example 17, p.110 (monthly calc) and
-        # example 18, p.113 (daily calc) of FAO paper
-
-        # Monthly ETo:
-        # Note, due to rounding errors in the FAO's example we can only
-        # test to 1 decimal place here!
-        eto = pyeto.fao_penman_monteith(
-            Rn=14.33,
-            t=convert.celsius2kelvin(30.2),
-            ws=2.0,
-            es=4.42,
-            ea=2.85,
-            delta_es=0.246,
-            psy=0.0674,
-            shf=0.14,
-        )
-        self.assertAlmostEqual(eto, 5.72, 1)
-
-        # Daily ETo:
-        # (Rn, t, ws, es, ea, delta_es, psy, shf=0.0)
-        eto = pyeto.fao_penman_monteith(
-            Rn=13.28,
-            t=convert.celsius2kelvin(16.9),
-            ws=2.078,
-            es=1.997,
-            ea=1.409,
-            delta_es=0.122,
-            psy=0.0666
-        )
-        self.assertAlmostEqual(eto, 3.9, 1)
 
     def test_psychrometric_const(self):
         # Test based on example 2, p.63 of FAO paper
