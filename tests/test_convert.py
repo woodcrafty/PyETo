@@ -27,3 +27,6 @@ class TestConvert(unittest.TestCase):
         self.assertAlmostEqual(pyeto.radians2degrees(1.5707963268, 90.0), 10)
         self.assertAlmostEqual(pyeto.radians2degrees(6.2831853072, 360.0, 10)
 
+
+if __name__ == '__main__':
+    unittest.main()
