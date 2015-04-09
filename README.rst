@@ -2,6 +2,14 @@
 PyETo
 =====
 
+.. image:: https://travis-ci.org/woodcrafty/pyeto.png?branch=master
+    :target: https://travis-ci.org/woodcrafty/pyeto
+    :alt: Build Status
+
+.. image:: https://coveralls.io/repos/woodcrafty/pyeto/badge.png?branch=master
+    :target: https://coveralls.io/r/woodcrafty/pyeto?branch=master
+    :alt: Coverage Status
+
 :Author: `Mark Richards <http://www.abdn.ac.uk/staffnet/profiles/m.richards/>`_
 :Email: mark.l.a.richardsREMOVETHIS@gmail.com
 :License: `BSD 3-Clause <http://opensource.org/licenses/BSD-3-Clause>`_
@@ -27,9 +35,12 @@ TODO: complete this section
 
 Versions tested
 ===============
+* Python 2.6
+* Python 2.7
 * Python 3.2
 * Python 3.3
 * Python 3.4
+* PyPy
 * PyPy3
 
 License
