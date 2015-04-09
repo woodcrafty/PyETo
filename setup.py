@@ -29,4 +29,5 @@ setup(
         'Development Status :: 3 - Alpha',
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Atmospheric Science',
+    ],
 )
