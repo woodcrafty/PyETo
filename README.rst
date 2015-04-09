@@ -2,12 +2,12 @@
 PyETo
 =====
 
-.. image:: https://travis-ci.org/woodcrafty/pyeto.png?branch=master
-    :target: https://travis-ci.org/woodcrafty/pyeto
+.. image:: https://travis-ci.org/woodcrafty/PyETo.png?branch=master
+    :target: https://travis-ci.org/woodcrafty/PyETo
     :alt: Build Status
 
-.. image:: https://coveralls.io/repos/woodcrafty/pyeto/badge.png?branch=master
-    :target: https://coveralls.io/r/woodcrafty/pyeto?branch=master
+.. image:: https://coveralls.io/repos/woodcrafty/PyETo/badge.png?branch=master
+    :target: https://coveralls.io/r/woodcrafty/PyETo?branch=master
     :alt: Coverage Status
 
 :Author: `Mark Richards <http://www.abdn.ac.uk/staffnet/profiles/m.richards/>`_
