@@ -104,9 +104,9 @@ def monthly_mean_daylight_hours(latitude, year=None):
     for mdays in month_days:
         dlh = 0   # Cumulative daylight hours
         for daynum in range(1, mdays + 1):
-            sd = fao.sol_dec(doy)                      # Solar declination
-            sha = fao.sunset_hour_angle(latitude, sd)  # Sunset hour angle
-            dlh += fao.daylight_hours(sha)             # Daylight hours
+            sd = fao.solar_declination(doy)
+            sha = fao.sunset_hour_angle(latitude, sd)
+            dlh += fao.daylight_hours(sha)
             doy += 1
         # Calc mean daylight hours of the month
         monthly_mean_dlh.append(dlh / mdays)
