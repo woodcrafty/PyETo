@@ -23,7 +23,7 @@ class TestConvert(unittest.TestCase):
 
     def test_radians2degrees(self):
         self.assertEqual(pyeto.radians2degrees(0), 0.0)
-        self.assertAlmostEqual(pyeto.radians2radians(-1.5707963268), -90.0, 10)
+        self.assertAlmostEqual(pyeto.radians2degrees(-1.5707963268), -90.0, 10)
         self.assertAlmostEqual(pyeto.radians2degrees(1.5707963268), 90.0, 10)
         self.assertAlmostEqual(pyeto.radians2degrees(6.2831853072), 360.0, 10)
 
