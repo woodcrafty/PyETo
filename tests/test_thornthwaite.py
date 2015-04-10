@@ -85,6 +85,27 @@ class TestThornthwaite(unittest.TestCase):
         for m in range(12):
             self.assertAlmostEqual(mmdlh[m], la_mmdlh[m], delta=0.25)
 
+        # Test with year set to a non-leap year
+        non_leap = pyeto.monthly_mean_daylight_hours(latitude, 2015)
+        for m in range(12):
+            self.assertEqual(mmdlh[m], non_leap[m])
+
+        # Test with year set to a leap year
+        leap = pyeto.monthly_mean_daylight_hours(latitude, 2016)
+        for m in range(12):
+            if m == 0:
+                self.assertEqual(leap[m], non_leap[m])
+            elif m == 1:  # Feb
+                # Because Feb extends further into year in a leap year it
+                # should have a slightly longer mean day length in northern
+                # hemisphere
+                self.assertGreater(leap[m], non_leap[m])
+            else:
+                # All months after Feb in a lieap year will be composed of
+                # diffent Julian days (days of the year) compared to a
+                # non-leap year so will have different mean daylengths.
+                self.assertNotEqual(leap[m], non_leap[m])
+
         # Test with bad latitude
         with self.assertRaises(ValueError):
             _ = pyeto.monthly_mean_daylight_hours(
