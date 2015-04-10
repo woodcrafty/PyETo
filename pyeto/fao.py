@@ -281,12 +281,12 @@ def et_rad(latitude, sd, sha, irl):
     return tmp1 * SOLAR_CONSTANT * irl * (tmp2 + tmp3)
 
 
-def fao_penman_monteith(Rn, t, ws, es, ea, delta_es, psy, shf=0.0):
+def fao56_penman_monteith(Rn, t, ws, es, ea, delta_es, psy, shf=0.0):
     """
     Estimate reference evapotranspiration (ETo) from a hypothetical
-    grass reference surface using t he FAO Penman-Monteith equation.
+    grass reference surface using t he FAO-56 Penman-Monteith equation.
 
-    Based on equation 6 in Allen et al, 1998.
+    Based on equation 6 in Allen et al (1998).
 
     :param Rn: Net radiation at crop surface [MJ m-2 day-1].
     :param t: Air temperature at 2 m height [deg Kelvin].
@@ -318,14 +318,19 @@ def hargreaves(tmin, tmax, tmean, Ra):
     the FAO Penman-Monteith equation. However, as an alternative, ETo can be
     estimated using the Hargreaves ETo equation.
 
+    Based on equation 52 in Allen et al (1998).
+
     :param tmin: Minimum daily temperature [deg C]
     :param tmax: Maximum daily temperature [deg C]
     :param tmean: Mean daily temperature [deg C]
-    :param Ra: Extraterrestrial radiation as equivalent evaporation [mm day-1]
-    :return: Evapotranspiration over grass [mm day-1]
+    :param Ra: Extraterrestrial radiation (Ra) [MJ m-2 day-1]
+    :return: Reference evapotranspiration over grass (ETo) [mm day-1]
     :rtype: float
     """
-    return 0.0023 * (tmean + 17.8) * (tmax - tmin) ** 0.5 * Ra
+    # Note, multiplied by 0.408 to convert extraterrestrial radiation could
+    # be given in MJ m-2 day-1 rather than as equivalent evaporation in
+    # mm day-1
+    return 0.0023 * (tmean + 17.8) * (tmax - tmin) ** 0.5 * 0.408 * Ra
 
 
 def inv_rel_dist_earth_sun(doy):
