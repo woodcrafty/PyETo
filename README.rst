@@ -22,9 +22,9 @@ data.
 
 Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
 
-1. FAO Penman-Monteith (Allen et al, 1998)
-2. Hargreaves (Hargreaves and Samani, 1982; 1985)
-3. Thornthwaite (Thornthwaite, 1948)
+* FAO Penman-Monteith (Allen et al, 1998)
+* Hargreaves (Hargreaves and Samani, 1982; 1985)
+* Thornthwaite (Thornthwaite, 1948)
 
 The documentation can be found at TODO: insert link
 
@@ -45,4 +45,4 @@ Versions tested
 
 License
 =======
-BSD 3-Clause "New" or "Revised" License
+BSD 3-Clause "New" or "Revised" License. See LICENSE.txt for details.
