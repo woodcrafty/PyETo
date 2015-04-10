@@ -33,11 +33,6 @@ class TestFAO(unittest.TestCase):
         tmean = pyeto.daily_mean_t(10, 20)
         self.assertEqual(tmean, 15.0)
 
-    def test_daily_soil_heat_flux(self):
-        # Have not found data to test against yet
-        #shf = pyeto.daily_soil_heat_flux(t_cur, t_prev, delta_t, soil_heat_cap=2.1, delta_z=0.10)
-        pass
-
     def test_daylight_hours(self):
         # Test based on example 9, p.83 of FAO paper
         dh = pyeto.daylight_hours(1.527)

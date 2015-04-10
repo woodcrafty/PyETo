@@ -72,44 +72,6 @@ def daily_mean_t(tmin, tmax):
     return (tmax + tmin) / 2.0
 
 
-def daily_soil_heat_flux(
-        t_cur, t_prev, delta_t, soil_heat_cap=2.1, delta_z=0.1):
-    """
-    Estimate daily soil heat flux (Gday) for a grass crop.
-
-    Requires current and previous air temperature and the length of time
-    separating these measurements (which should be greater than or equal
-    to one day).
-
-    The calculations are based on FAO equation 41 in Allen et al (1998).
-
-    The soil heat capacity is related to its mineral composition and water
-    content. The effective soil depth (z) is only 0.10-0.20 m for one day.
-    The resulting heat flux can be converted to equivalent evaporation
-    [mm day-1] using ``energy2evap()``.
-
-    Arguments:
-    :param t_cur: Air temperature at time t (current) [deg C]
-    :param t_prev: Air temperature at time t-1 [deg C]
-    :param delta_t: Length of time interval between t_cur and t_prev [days].
-        Should be >= 1.
-    :param soil_heat_cap: Soil heat capacity [MJ m-3 degC-1]. Defaults value
-        is 2.1.
-    :param delta_z: Effective soil depth [m] (default - 0.1 m following FAO
-        recommendation for daily calculations
-    :return: Daily soil heat flux for a grass crop [MJ m-2 day-1]
-    :rtype: float
-    """
-    # for daily calc delta_t should be greater than 1 day
-    if delta_t < 1.0:
-        raise ValueError(
-            'delta_t argument should be >= 1: {0:g}:'.format(delta_t))
-
-    # Assume an effective soil depth of 0.10 m for a daily calculation as per
-    # FAO recommendation
-    return soil_heat_cap * ((t_cur - t_prev) / delta_t) * delta_z
-
-
 def daylight_hours(sha):
     """
     Calculate daylight hours from sunset hour angle.
