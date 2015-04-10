@@ -77,6 +77,11 @@ class TestFAO(unittest.TestCase):
         etrad = pyeto.et_rad(convert.deg2rad(-20), 0.120, 1.527, 0.985)
         self.assertAlmostEqual(etrad, 32.2, 1)
 
+    def test_energy2evap(self):
+        # Test based on example 13, p.90 of FAO paper
+        evap = pyeto.energy2evap(0.33)
+        self.assertAlmostEqual(evap, 0.13, 2)
+
     def test_fao_penman_monteith(self):
         # Test based on example 17, p.110 (monthly calc) and
         # example 18, p.113 (daily calc) of FAO paper
@@ -84,7 +89,7 @@ class TestFAO(unittest.TestCase):
         # Monthly ETo:
         # Note, due to rounding errors in the FAO's example we can only
         # test to 1 decimal place here!
-        eto = pyeto.fao_penman_monteith(
+        eto = pyeto.fao56_penman_monteith(
             Rn=14.33,
             t=convert.celsius2kelvin(30.2),
             ws=2.0,
@@ -98,7 +103,7 @@ class TestFAO(unittest.TestCase):
 
         # Daily ETo:
         # (Rn, t, ws, es, ea, delta_es, psy, shf=0.0)
-        eto = pyeto.fao_penman_monteith(
+        eto = pyeto.fao56_penman_monteith(
             Rn=13.28,
             t=convert.celsius2kelvin(16.9),
             ws=2.078,
@@ -110,10 +115,11 @@ class TestFAO(unittest.TestCase):
         self.assertAlmostEqual(eto, 3.9, 1)
 
     def test_hargreaves(self):
-        # Have not yet found data to test against
-        #eto = pyeto.hargreaves(tmin, tmax, tmean, Ra)
-        #self.assertAlmostEqual(eto, 32.2, 1)
-        pass
+        # Tested against worked example from "Estimating Evapotranspiration
+        # from weather data" by Vishal K. Mehta, Arghyam/Cornell University,
+        # Nov 2, 2006.
+        eto = pyeto.hargreaves(tmin=28, tmax=38, tmean=35, Ra=38.93715)
+        self.assertAlmostEqual(eto, 6.1, 1)
 
     def test_inv_rel_dist_earth_sun(self):
         # Test based on example 8, p.80 of FAO paper
@@ -170,10 +176,18 @@ class TestFAO(unittest.TestCase):
             1, 87.9) * (25.6 - 19.5)
         self.assertAlmostEqual(ea, 1.91, 2)
 
-    def test_energy2evap(self):
-        # Test based on example 13, p.90 of FAO paper
-        evap = pyeto.energy2evap(0.33)
-        self.assertAlmostEqual(evap, 0.13, 2)
+        self.assertEqual(
+            pyeto.psy_const_of_psychrometer(1, 100), 100.0 * 0.000662)
+        self.assertEqual(
+            pyeto.psy_const_of_psychrometer(2, 100), 100.0 * 0.000800)
+        self.assertEqual(
+            pyeto.psy_const_of_psychrometer(3, 100), 100.0 * 0.001200)
+
+        # Test bad pyschrometer
+        with self.assertRaises(ValueError):
+            pyeto.psy_const_of_psychrometer(0, 100)
+        with self.assertRaises(ValueError):
+            pyeto.psy_const_of_psychrometer(4, 100)
 
     def test_rh_from_ea_es(self):
         rh = pyeto.rh_from_ea_es(50, 100)
@@ -191,9 +205,14 @@ class TestFAO(unittest.TestCase):
 
     def test_sol_rad_from_t(self):
         # Test based on example 15, p.98 of FAO paper
-        solrad = pyeto.sol_rad_from_t(
-            40.6, 50.0, 14.8, 26.6, coastal=False)
+        solrad = pyeto.sol_rad_from_t(40.6, 50.0, 14.8, 26.6, coastal=False)
         self.assertAlmostEqual(solrad, 22.3, 1)
+
+        # Test that coastal param works
+        solrad = pyeto.sol_rad_from_t(40.6, 50.0, 14.8, 26.6, coastal=True)
+        # Multiply previous example by ratio of coastal to non-coastal
+        # coefficient
+        self.assertAlmostEqual(solrad, 22.3 * 0.19 / 0.16, 1)
 
         # Test that the clear sky radiation constraint is working:
         solrad = pyeto.sol_rad_from_t(
