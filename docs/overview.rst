@@ -9,9 +9,9 @@ Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
 
 These methods are outlined below.
 
--------------------
-FAO Penman-Monteith
--------------------
+----------------------
+FAO-56 Penman-Monteith
+----------------------
 This is the method recommended by the Food and Agriculture Organisation of
 the United Nations (FAO) for estimating ET\ :sub:`o` for a grass crop using
 limited meteorological data (see Allen et al, 1998).
@@ -46,5 +46,4 @@ humidity.
 Thornthwaite
 ------------
 This method estimates monthly PET using only minimum, maximum and mean monthly
-temperature, and latitude. It has similar deficiencies to the Hargreaves
-method.
+temperature, and latitude.

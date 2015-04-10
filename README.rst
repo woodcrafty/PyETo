@@ -22,7 +22,7 @@ data.
 
 Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
 
-* FAO Penman-Monteith (Allen et al, 1998)
+* FAO-56 Penman-Monteith (Allen et al, 1998)
 * Hargreaves (Hargreaves and Samani, 1982; 1985)
 * Thornthwaite (Thornthwaite, 1948)
 
