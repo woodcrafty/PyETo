@@ -116,9 +116,37 @@ class TestThornthwaite(unittest.TestCase):
         # the month. This results in a small difference in estimated monthly
         # PET of up to +/- 4 mm.
         pet = pyeto.thornthwaite(test_monthly_t, test_monthly_mean_dlh)
-        for i in range(len(pet)):
-            diff = abs(pet[i] - test_pet[i])
+        for m in range(12):
+            diff = abs(pet[m] - test_pet[m])
             self.assertLess(diff, 4)
+
+        # Test with non-leap year
+        pet_non_leap = pyeto.thornthwaite(
+            test_monthly_t, test_monthly_mean_dlh, year=2015)
+        # Test results are same as above when year argument is set
+        for m in range(12):
+            self.assertEqual(pet[m], pet_non_leap[m])
+
+        # Test with leap year
+        pet_leap = pyeto.thornthwaite(
+            test_monthly_t, test_monthly_mean_dlh, year=2016)
+        for m in range(12):
+            # 29 days in Feb so PET should be higher than in non-leap year
+            # results
+            if m == 1:  # Feb
+                self.assertGreater(pet_leap[m], pet_non_leap[m])
+            else:
+                self.assertEqual(pet_leap[m], pet_non_leap[m])
+
+        # Test with wrong length args
+        with self.assertRaises(ValueError):
+            _ = pyeto.thornthwaite(list(range(11)), test_monthly_mean_dlh)
+        with self.assertRaises(ValueError):
+            _ = pyeto.thornthwaite(list(range(13)), test_monthly_mean_dlh)
+        with self.assertRaises(ValueError):
+            _ = pyeto.thornthwaite(test_monthly_t, list(range(11)))
+        with self.assertRaises(ValueError):
+            _ = pyeto.thornthwaite(test_monthly_t, list(range(13)))
 
 
 if __name__ == '__main__':
