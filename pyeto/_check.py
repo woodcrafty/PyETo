@@ -19,23 +19,23 @@ def check_doy(doy):
         raise ValueError(
             'Day of the year (doy) must be in range 1-366: {0!r}'.format(doy))
 
-def check_latitude_in_rad(latitude):
+def check_latitude_rad(latitude):
      if not _MINLAT_RADIANS <= latitude <= _MAXLAT_RADIANS:
         raise ValueError(
             'latitude outside of valid range: {0!r} radians'.format(latitude))
 
 
-def check_sol_dec_in_rad(sd):
+def check_sol_dec_rad(sd):
     """
     Solar declination can vary between -90 and +90 degrees, the same as
     latitude.
     """
     try:
-        check_latitude_in_rad(sd)
+        check_latitude_rad(sd)
     except ValueError:
         raise ValueError(
             'solar declination outside of valid range: {0!r} radians'
-            .format(latitude))
+            .format(sd))
 
 
 def check_day_hours(hours, arg_name):

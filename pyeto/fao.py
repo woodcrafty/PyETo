@@ -18,8 +18,8 @@ import math
 from ._check import (
     check_day_hours,
     check_doy,
-    check_latitude_in_rad,
-    check_sol_dec_in_rad,
+    check_latitude_rad,
+    check_sol_dec_rad,
 )
 
 # Public constants
@@ -271,8 +271,8 @@ def et_rad(latitude, sd, sha, irl):
     :rtype: float
     """
     # TODO: raise exceptions for sd and sha?
-    check_latitude_in_rad(latitude)
-    check_sol_dec_in_rad(latitude)
+    check_latitude_rad(latitude)
+    check_sol_dec_rad(latitude)
 
     # Calculate daily extraterrestrial radiation based on FAO equation 21
     tmp1 = (24.0 * 60.0) / math.pi
@@ -664,8 +664,8 @@ def sunset_hour_angle(latitude, sd):
     :return: Sunset hour angle [radians].
     :rtype: float
     """
-    check_latitude_in_rad(latitude)
-    check_sol_dec_in_rad(sd)
+    check_latitude_rad(latitude)
+    check_sol_dec_rad(sd)
 
     # Calculate sunset hour angle (sha) [radians] from latitude and solar
     # declination using FAO equation 25
