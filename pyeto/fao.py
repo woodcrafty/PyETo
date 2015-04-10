@@ -285,14 +285,19 @@ def es_from_t(t):
     return 0.6108 * math.exp((17.27 * t) / (t + 237.3))
 
 
-def et_radiation(latitude, sd, sha, irl):
+def extraterrestrial_radiation(latitude, sd, sha, irl):
     """
-    Estimate daily extraterrestrial radiation ('top of the atmosphere
-    radiation')
+    Estimate daily extraterrestrial radiation (Ra, 'top of the atmosphere
+    radiation').
 
     Based on FAO equation 21. If monthly mean radiation is required make
     sure *sd*. *sha* and *irl* have been calculated using the day of the
     year that corresponds to the middle of the month.
+
+    **Note**: From Allen et al (1998) "For the winter months in latitudes
+    greater than 55 degrees (N or S), the equations have limited validity.
+    Reference should be made to the Smithsonian Tables to assess possible
+    deviations."
 
     :param latitude: Latitude [radians]
     :param sd: Solar declination [radians]

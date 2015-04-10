@@ -77,9 +77,9 @@ class TestFAO(unittest.TestCase):
         dh = pyeto.delta_sat_vap_pressure(30.2)
         self.assertAlmostEqual(dh, 0.246, 3)
 
-    def test_et_radiation(self):
+    def test_extraterrestrial_radiation(self):
         # Test based on example 8, p.80 of FAO paper
-        etrad = pyeto.et_radiation(
+        etrad = pyeto.extraterrestrial_radiation(
             convert.degrees2radians(-20), 0.120, 1.527, 0.985)
         self.assertAlmostEqual(etrad, 32.2, 1)
 
