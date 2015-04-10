@@ -29,7 +29,7 @@ class TestThornthwaite(unittest.TestCase):
             11.0,  # Nov
             10.8,  # Dec
         ]
-        mmdlh = pyeto.monthly_mean_daylight_hours(pyeto.degrees2radians(20.0))
+        mmdlh = pyeto.monthly_mean_daylight_hours(pyeto.deg2rad(20.0))
         # Values were only quoted to 1 decimal place so check they are accurate
         # to within 12 minutes (0.2 hours)
         for m in range(12):
@@ -54,7 +54,7 @@ class TestThornthwaite(unittest.TestCase):
             9.2,   # Nov
             8.5,   # Dec
         ]
-        mmdlh = pyeto.monthly_mean_daylight_hours(pyeto.degrees2radians(46.0))
+        mmdlh = pyeto.monthly_mean_daylight_hours(pyeto.deg2rad(46.0))
         # Values were only quoted to 1 decimal place so check they are accurate
         # to within 12 minutes (0.2 hours)
         for m in range(12):
@@ -63,7 +63,7 @@ class TestThornthwaite(unittest.TestCase):
         # Test against values obtained for Los Angles, California,
         # latitude 34 deg 05' N, from
         # http://aa.usno.navy.mil/data/docs/Dur_OneYear.php
-        latitude = pyeto.degrees2radians(34.0833333)
+        latitude = pyeto.deg2rad(34.0833333)
         la_mmdlh = [
             10.182,  # Jan
             10.973,  # Feb
@@ -88,18 +88,18 @@ class TestThornthwaite(unittest.TestCase):
         # Test with bad latitude
         with self.assertRaises(ValueError):
             _ = pyeto.monthly_mean_daylight_hours(
-                pyeto.degrees2radians(90.01))
+                pyeto.deg2rad(90.01))
 
         with self.assertRaises(ValueError):
             _ = pyeto.monthly_mean_daylight_hours(
-                pyeto.degrees2radians(-90.01))
+                pyeto.deg2rad(-90.01))
 
         # Test limits of latitude
         _ = pyeto.monthly_mean_daylight_hours(
-            pyeto.degrees2radians(90.0))
+            pyeto.deg2rad(90.0))
 
         _ = pyeto.monthly_mean_daylight_hours(
-            pyeto.degrees2radians(-90.0))
+            pyeto.deg2rad(-90.0))
 
     def test_thornthwaite(self):
         # Test values obtained from a worked example provided in Google book

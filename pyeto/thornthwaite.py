@@ -13,7 +13,7 @@ Thornthwaite CW (1948) An approach toward a rational classification of
 import calendar
 
 from . import fao
-from ._check import check_latitude_in_radians
+from ._check import check_latitude_in_rad
 
 _MONTHDAYS = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _LEAP_MONTHDAYS = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -97,7 +97,7 @@ def monthly_mean_daylight_hours(latitude, year=None):
     :return: Mean daylight hours of each month of a year [hours]
     :rtype: List of floats.
     """
-    check_latitude_in_radians(latitude)
+    check_latitude_in_rad(latitude)
 
     if year is None or not calendar.isleap(year):
         month_days = _MONTHDAYS
@@ -108,7 +108,7 @@ def monthly_mean_daylight_hours(latitude, year=None):
     for mdays in month_days:
         dlh = 0.0   # Cumulative daylight hours for the month
         for daynum in range(1, mdays + 1):
-            sd = fao.solar_declination(doy)
+            sd = fao.sol_dec(doy)
             sha = fao.sunset_hour_angle(latitude, sd)
             dlh += fao.daylight_hours(sha)
             doy += 1

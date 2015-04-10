@@ -18,8 +18,8 @@ import math
 from ._check import (
     check_day_hours,
     check_doy,
-    check_latitude_in_radians,
-    check_solar_declination_in_radians,
+    check_latitude_in_rad,
+    check_sol_dec_in_rad,
 )
 
 # Public constants
@@ -28,13 +28,13 @@ SOLAR_CONSTANT = 0.0820    # Solar constant [MJ m-2 min-1]
 STEFAN_BOLTZMANN_CONSTANT = 0.000000004903
 
 
-def atmospheric_pressure(altitude):
+def atm_pressure(altitude):
     """
     Estimate atmospheric pressure from altitude.
 
-    This function uses equation (7) in the FAO paper, page 62. Calculated using
-    a simplification of the ideal gas law, assuming 20 deg C for a standard
-    atmosphere.
+    This function uses equation (7), page 62 in Allen et al (1998). Calculated
+    using a simplification of the ideal gas law, assuming 20 deg C for a
+    standard atmosphere.
 
     :param altitude: Elevation/altitude above sea level [m]
     :return: atmospheric pressure [kPa]
@@ -44,12 +44,12 @@ def atmospheric_pressure(altitude):
     return math.pow(tmp, 5.26) * 101.3
 
 
-def clear_sky_radiation(altitude, et_rad):
+def clear_sky_rad(altitude, et_rad):
     """
     Estimate clear sky radiation from altitude and extraterrestrial radiation.
 
-    Based on FAO equation 37 which is recommended when calibrated Angstrom
-    values are not available.
+    Based on equation 37 in Allen et al (1998) which is recommended when
+    calibrated Angstrom values are not available.
 
     :param altitude: Elevation above sea level [m]
     :param et_rad: Extraterrestrial radiation [MJ m-2 day-1]
@@ -78,13 +78,15 @@ def daily_soil_heat_flux(
     Estimate daily soil heat flux (Gday) for a grass crop.
 
     Requires current and previous air temperature and the length of time
-    separating these measurements (which should be greater than 1 day).
-    The calculations are based on FAO equation 41.
+    separating these measurements (which should be greater than or equal
+    to one day).
+
+    The calculations are based on FAO equation 41 in Allen et al (1998).
 
     The soil heat capacity is related to its mineral composition and water
     content. The effective soil depth (z) is only 0.10-0.20 m for one day.
     The resulting heat flux can be converted to equivalent evaporation
-    [mm day-1] using ``fao.equiv_evap()``.
+    [mm day-1] using ``energy2evap()``.
 
     Arguments:
     :param t_cur: Air temperature at time t (current) [deg C]
@@ -112,7 +114,7 @@ def daylight_hours(sha):
     """
     Calculate daylight hours from sunset hour angle.
 
-    Based on FAO equation 34.
+    Based on FAO equation 34 in Allen et al (1998).
 
     :param sha: Sunset hour angle [rad].
     :return: Daylight hours.
@@ -127,7 +129,7 @@ def delta_sat_vap_pressure(t):
     Estimate the slope of the saturation vapour pressure curve at a given
     temperature.
 
-    Based on equation 13 from the FAO paper. If using in the Penman-Monteith
+    Based on equation 13 in Allen et al (1998). If using in the Penman-Monteith
     *t* should be the mean air temperature.
 
     :param t: Air temperature [deg C]. Use mean air temperature for use in
@@ -143,8 +145,8 @@ def ea_from_tmin(tmin):
     """
     Estimate actual vapour pressure (ea) from minimum temperature.
 
-    Based on equation 48 in the FAO paper. This method is to be used where
-    humidity data are lacking or are of questionable quality. The method
+    Based on equation 48 in in Allen et al (1998). This method is to be used
+    where humidity data are lacking or are of questionable quality. The method
     assumes that the dewpoint temperature is approximately equal to the
     minimum temperature (*tmin*), i.e. the air is saturated with water
     vapour at *tmin*.
@@ -165,7 +167,7 @@ def ea_from_rhmin_rhmax(e_tmin, e_tmax, rh_min, rh_max):
     Estimate actual vapour pressure (ea) from saturation vapour pressure and
     relative humidity.
 
-    Based on FAO equation 17.
+    Based on FAO equation 17 in Allen et al (1998).
 
     :param e_tmin: Saturation vapour pressure at daily minimum temperature [kPa]
     :param e_tmax: Saturation vapour pressure at daily maximum temperature [kPa]
@@ -184,7 +186,7 @@ def ea_from_rhmax(e_tmin, rh_max):
     Estimate actual vapour pressure (ea) from saturation vapour pressure at
     daily minimum temperature and maximum relative humidity
 
-    Based on FAO equation 18.
+    Based on FAO equation 18 in Allen et al (1998).
 
     :param e_tmin: Saturation vapour pressure at daily minimum temperature [kPa]
     :param rh_max: Maximum relative humidity [%]
@@ -199,7 +201,7 @@ def ea_from_rhmean(e_tmin, e_tmax, rh_mean):
     Estimate actual vapour pressure (ea) from saturation vapour pressure at daily
     minimum and maximum temperature, and mean relative humidity.
 
-    Based on FAO equation 19.
+    Based on FAO equation 19 in Allen et al (1998).
 
     :param e_tmin: Saturation vapour pressure at daily minimum temperature [kPa]
     :param e_tmax: Saturation vapour pressure at daily maximum temperature [kPa]
@@ -214,8 +216,8 @@ def ea_from_tdew(tdew):
     """
     Estimate actual vapour pressure (ea) from dewpoint temperature.
 
-    Based on equation 14 in the FAO paper. As the dewpoint temperature is the
-    temperature to which air needs to be cooled to make it saturated, the
+    Based on equation 14 in Allen et al (1998). As the dewpoint temperature is
+    the temperature to which air needs to be cooled to make it saturated, the
     actual vapour pressure is the saturation vapour pressure at the dewpoint
     temperature.
 
@@ -233,7 +235,7 @@ def ea_from_twet_tdry(twet, tdry, e_twet, psy_const):
     """
     Estimate actual vapour pressure (ea) from wet and dry bulb temperature.
 
-    based on equation 15 in the FAO paper. As the dewpoint temperature
+    Based on equation 15 in Allen et al (1998). As the dewpoint temperature
     is the temperature to which air needs to be cooled to make it saturated, the
     actual vapour pressure is the saturation vapour pressure at the dewpoint
     temperature.
@@ -254,7 +256,7 @@ def ea_from_twet_tdry(twet, tdry, e_twet, psy_const):
     return e_twet - (psy_const * (tdry - twet))
 
 
-def energy2equiv_evaporation(energy):
+def energy2evap(energy):
     """
     Convert energy (e.g. radiation energy) in MJ m-2 day-1 to the equivalent
     evaporation, assuming a grass reference crop.
@@ -263,7 +265,7 @@ def energy2equiv_evaporation(energy):
     factor equal to the inverse of the latent heat of vapourisation
     (1 / lambda = 0.408).
 
-    Based on FAO equation 20.
+    Based on FAO equation 20 in Allen et al (1998).
 
     :param energy: Energy e.g. radiation or heat flux [MJ m-2 day-1].
     :return: Equivalent evaporation [mm day-1].
@@ -276,7 +278,7 @@ def es_from_t(t):
     """
     Estimate saturation vapour pressure (es) from air temperature.
 
-    Based on equations 11 and 12 in the FAO paper (see references).
+    Based on equations 11 and 12 in Allen et al (1998).
 
     :param t: Temperature [deg C]
     :return: Saturation vapour pressure [kPa]
@@ -285,14 +287,14 @@ def es_from_t(t):
     return 0.6108 * math.exp((17.27 * t) / (t + 237.3))
 
 
-def extraterrestrial_radiation(latitude, sd, sha, irl):
+def et_rad(latitude, sd, sha, irl):
     """
     Estimate daily extraterrestrial radiation (Ra, 'top of the atmosphere
     radiation').
 
-    Based on FAO equation 21. If monthly mean radiation is required make
-    sure *sd*. *sha* and *irl* have been calculated using the day of the
-    year that corresponds to the middle of the month.
+    Based on equation 21 in Allen et al (1998). If monthly mean radiation is
+    required make sure *sd*. *sha* and *irl* have been calculated using the day
+    of the year that corresponds to the middle of the month.
 
     **Note**: From Allen et al (1998) "For the winter months in latitudes
     greater than 55 degrees (N or S), the equations have limited validity.
@@ -307,8 +309,8 @@ def extraterrestrial_radiation(latitude, sd, sha, irl):
     :rtype: float
     """
     # TODO: raise exceptions for sd and sha?
-    check_latitude_in_radians(latitude)
-    check_solar_declination_in_radians(latitude)
+    check_latitude_in_rad(latitude)
+    check_sol_dec_in_rad(latitude)
 
     # Calculate daily extraterrestrial radiation based on FAO equation 21
     tmp1 = (24.0 * 60.0) / math.pi
@@ -322,7 +324,7 @@ def fao_penman_monteith(Rn, t, ws, es, ea, delta_es, psy, shf=0.0):
     Estimate reference evapotranspiration (ETo) from a hypothetical
     grass reference surface using t he FAO Penman-Monteith equation.
 
-    Based on equation 6 in the FAO paper (Allen et al, 1998).
+    Based on equation 6 in Allen et al, 1998.
 
     :param Rn: Net radiation at crop surface [MJ m-2 day-1].
     :param t: Air temperature at 2 m height [deg Kelvin].
@@ -369,7 +371,7 @@ def inv_rel_dist_earth_sun(doy):
     Calculate the inverse relative distance between earth and sun from
     day of the year.
 
-    Based on FAO equation 23.
+    Based on FAO equation 23 in Allen et al (1998).
 
     :param doy: Day of year [1 to 366]
     :return: Inverse relative distance between earth and the sun
@@ -385,7 +387,8 @@ def mean_es(tmin, tmax):
     Estimate mean saturation vapour pressure es [kPa] from minimum and
     maximum temperature.
 
-    Based on equations (11) and (12) in the FAO paper (see references).
+    Based on equations 11 and 12 in Allen et al (1998).
+
     Mean saturation vapour pressure is calculated as the mean of the
     saturation vapour pressure at tmax (maximum temperature) and tmin
     (minimum temperature).
@@ -403,10 +406,10 @@ def monthly_soil_heat_flux(t_month_prev, t_month_next):
     Estimate monthly soil heat flux (Gmonth) from the mean air temperature of
     the previous and next month, assuming a grass crop.
 
-    Based on FAO equation 43. If the air temperature of the next month is not
-    known use ``monthly_soil_heat_flux2()`` instead. The resluting heat flux
-    can be converted to equivalent evaporation [mm day-1] using
-    ``equiv_evap()``.
+    Based on equation 43 in Allen et al (1998). If the air temperature of the
+    next month is not known use ``monthly_soil_heat_flux2()`` instead. The
+    resulting heat flux can be converted to equivalent evaporation [mm day-1]
+    using ``energy2evap()``.
 
     :param t_month_prev: Mean air temperature of the previous month
         [deg Celsius]
@@ -422,10 +425,10 @@ def monthly_soil_heat_flux2(t_month_prev, t_month_cur):
     Estimate monthly soil heat flux (Gmonth) [MJ m-2 day-1] from the mean
     air temperature of the previous and current month, assuming a grass crop.
 
-    Based on FAO equation (44). If the air temperature of the next month is
-    available, use ``monthly_soil_heat_flux()`` instead. The resluting heat
-    flux can be converted to equivalent evaporation [mm day-1] using
-    ``equiv_evap()``.
+    Based on equation 44 in Allen et al (1998). If the air temperature of the
+    next month is available, use ``monthly_soil_heat_flux()`` instead. The
+    resulting heat flux can be converted to equivalent evaporation [mm day-1]
+    using ``energy2evap()``.
 
     Arguments:
     :param t_month_prev: Mean air temperature of the previous month
@@ -437,7 +440,7 @@ def monthly_soil_heat_flux2(t_month_prev, t_month_cur):
     return 0.14 * (t_month_cur - t_month_prev)
 
 
-def net_incoming_solar_radiation(sol_rad, albedo=0.23):
+def net_in_sol_rad(sol_rad, albedo=0.23):
     """
     Calculate net incoming solar (or shortwave) radiation from gross
     incoming solar radiation, assuming a grass reference crop.
@@ -445,9 +448,9 @@ def net_incoming_solar_radiation(sol_rad, albedo=0.23):
     Net incoming solar radiation is the net shortwave radiation resulting
     from the balance between incoming and reflected solar radiation. The
     output can be converted to equivalent evaporation [mm day-1] using
-    ``equiv_evap()``.
+    ``energy2evap()``.
 
-    Based on FAO equation 38.
+    Based on FAO equation 38 in Allen et al (1998).
 
     :param sol_rad: Gross incoming solar radiation [MJ m-2 day-1].
     :param albedo: Albedo of the crop [dimensionless]. Default is 0.23,
@@ -458,7 +461,7 @@ def net_incoming_solar_radiation(sol_rad, albedo=0.23):
     return (1 - albedo) * sol_rad
 
 
-def net_outgoing_longwave_radiation(tmin, tmax, sol_rad, clear_sky_rad, ea):
+def net_out_lw_rad(tmin, tmax, sol_rad, clear_sky_rad, ea):
     """
     Estimate net outgoing longwave radiation.
 
@@ -472,9 +475,9 @@ def net_outgoing_longwave_radiation(tmin, tmax, sol_rad, clear_sky_rad, ea):
     other absorbers are assumed to be constant.
 
     The output can be converted to equivalent evaporation [mm day-1] using
-    ``equiv_evap()``.
+    ``energy2evap()``.
 
-    Based on FAO equation 39.
+    Based on FAO equation 39 in Allen et al (1998).
 
     :param tmin: Absolute daily minimum temperature [degrees Kelvin]
     :param tmax: Absolute daily maximum temperature [degrees Kelvin]
@@ -491,16 +494,17 @@ def net_outgoing_longwave_radiation(tmin, tmax, sol_rad, clear_sky_rad, ea):
     return tmp1 * tmp2 * tmp3
 
 
-def net_radiation(ni_sw_rad, no_lw_rad):
+def net_rad(ni_sw_rad, no_lw_rad):
     """
     Calculate daily net radiation at the crop surface, assuming a grass
     reference crop.
 
     Net radiation is the difference between the incoming net shortwave (or
     solar) radiation and the outgoing net longwave radiation. Output can be
-    converted to equivalent evaporation [mm day-1] using ``equiv_evap()``.
+    converted to equivalent evaporation [mm day-1] using
+    ``energy2evap()``.
 
-    Based on FAO equation 40.
+    Based on FAO equation 40 in Allen et al (1998).
 
     :param ni_sw_rad: Net incoming shortwave radiation [MJ m-2 day-1].
     :param no_lw_rad: Net outgoing longwave radiation [MJ m-2 day-1].
@@ -512,14 +516,14 @@ def net_radiation(ni_sw_rad, no_lw_rad):
     return ni_sw_rad - no_lw_rad
 
 
-def psychrometric_const(atmos_pres):
+def psy_const(atmos_pres):
     """
     Calculate the psychrometric constant.
 
     This method assumes that the air is saturated with water vapour at T_min.
     This assumption may not hold in arid areas.
 
-    Based on equation 8 in the FAO paper (see references), page 95.
+    Based on equation 8, page 95 in Allen et al (1998).
 
     :param atmos_pres: Atmospheric pressure [kPa]
     :return: Psychrometric constant [kPa degC-1].
@@ -528,12 +532,12 @@ def psychrometric_const(atmos_pres):
     return 0.000665 * atmos_pres
 
 
-def psychrometric_const_of_psychrometer(psychrometer, atmos_pres):
+def psy_const_of_psychrometer(psychrometer, atmos_pres):
     """
     Calculate the psychrometric constant for different types of
     psychrometer at a given atmospheric pressure.
 
-    Based on FAO equation 16.
+    Based on FAO equation 16 in Allen et al (1998).
 
     :param psychrometer: Integer between 1 and 3 which denotes type of
         psychrometer:
@@ -565,7 +569,7 @@ def rh_from_ea_es(ea, es):
     Calculate relative humidity as the ratio of actual vapour pressure
     to saturation vapour pressure at the same temperature.
 
-    See FAO paper, page 67 for details.
+    See Allen et al (1998), page 67 for details.
 
     :param ea: Actual vapour pressure [units don't matter as long as same as
         es].
@@ -577,11 +581,11 @@ def rh_from_ea_es(ea, es):
     return 100.0 * ea / es
 
 
-def solar_declination(doy):
+def sol_dec(doy):
     """
     Calculate solar declination from day of the year.
 
-    Based on FAO equation 24.
+    Based on FAO equation 24 in Allen et al (1998).
 
     :param doy: Day of year (integer between 1 and 365 or 366).
     :return: solar declination [radians]
@@ -591,7 +595,7 @@ def solar_declination(doy):
     return 0.409 * math.sin(((2.0 * math.pi / 365.0) * doy - 1.39))
 
 
-def solar_radiation_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
+def sol_rad_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
     """
     Calculate incoming solar (or shortwave) radiation (radiation hitting a
     horizontal plane after scattering by the atmosphere) from relative
@@ -604,7 +608,7 @@ def solar_radiation_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
     calculated using the day of the year that corresponds to the middle of
     the month.
 
-    Based on FAO equations 34 and 35.
+    Based on equations 34 and 35 in Allen et al (1998).
 
     :param dl_hours: Number of daylight hours [hours]
     :param sunshine_hours: Sunshine duration [hours]
@@ -620,19 +624,19 @@ def solar_radiation_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
     return (0.5 * sunshine_hours / daylight_hours + 0.25) * et_rad
 
 
-def solar_radiation_from_t(et_rad, cs_rad, tmin, tmax, coastal):
+def sol_rad_from_t(et_rad, cs_rad, tmin, tmax, coastal):
     """
     Estimate incoming solar (or shortwave) radiation, Rs, (radiation hitting
     a horizontal plane after scattering by the atmosphere) from min and max
     temperature together with an empirical adjustment coefficient for
     'interior' and 'coastal' regions.
 
-    The formula is based on FAO equation 50 which is the Hargreaves
-    radiation formula (Hargreaves and Samani, 1982, 1985). This method should
-    be used only when solar radiation or sunshine hours data are not
-    available. It is only recommended for locations where it is not possible
-    to use radiation data from a regional station (either because climate
-    conditions are heterogeneous or data are lacking).
+    The formula is based on equation 50 in Allen et al (1998) which is the
+    Hargreaves radiation formula (Hargreaves and Samani, 1982, 1985). This
+    method should be used only when solar radiation or sunshine hours data are
+    not available. It is only recommended for locations where it is not
+    possible to use radiation data from a regional station (either because
+    climate conditions are heterogeneous or data are lacking).
 
     **NOTE**: this method is not suitable for island locations due to the
     moderating effects of the surrounding water.
@@ -662,7 +666,7 @@ def solar_radiation_from_t(et_rad, cs_rad, tmin, tmax, coastal):
     return min(solar_rad, cs_rad)
 
 
-def solar_radiation_island(et_rad):
+def sol_rad_island(et_rad):
     """
     Estimate incoming solar (or shortwave) radiation (radiation hitting a
     horizontal plane after scattering by the atmosphere) for an island
@@ -675,7 +679,7 @@ def solar_radiation_island(et_rad):
     **NOTE**: This method is only applicable for low altitudes (0-100 m)
     and monthly calculations.
 
-    Based on FAO equation 51.
+    Based on FAO equation 51 in Allen et al (1998).
 
     :param et_rad: Extraterrestrial radiation [MJ m-2 day-1].
     :return: Incoming solar (or shortwave) radiation [MJ m-2 day-1].
@@ -689,7 +693,7 @@ def sunset_hour_angle(latitude, sd):
     Calculate sunset hour angle (Ws) from latitude and solar
     declination.
 
-    Based on FAO equation 25.
+    Based on FAO equation 25 in Allen et al (1998).
 
     :param latitude: Latitude [radians]. Note: *latitude* should be negative
         if it in the southern hemisphere, positive if in the northern
@@ -698,8 +702,8 @@ def sunset_hour_angle(latitude, sd):
     :return: Sunset hour angle [radians].
     :rtype: float
     """
-    check_latitude_in_radians(latitude)
-    check_solar_declination_in_radians(sd)
+    check_latitude_in_rad(latitude)
+    check_sol_dec_in_rad(sd)
 
     # Calculate sunset hour angle (sha) [radians] from latitude and solar
     # declination using FAO equation 25
@@ -716,7 +720,7 @@ def wind_speed_2m(meas_ws, z):
     surface to wind speed at 2 m above the surface, assuming a short grass
     surface.
 
-    Based on FAO equation 47.
+    Based on FAO equation 47 in Allen et al (1998).
 
     :param meas_ws: Measured wind speed [m s-1]
     :param z: Height of wind measurement above ground surface [m]

@@ -30,7 +30,7 @@ def kelvin2celsius(kelvin):
     return kelvin - 273.15
 
 
-def degrees2radians(degrees):
+def deg2rad(degrees):
     """
     Convert angular degrees to radians
 
@@ -41,7 +41,7 @@ def degrees2radians(degrees):
     return degrees * (math.pi / 180.0)
 
 
-def radians2degrees(radians):
+def rad2deg(radians):
     """
     Convert radians to angular degrees
 

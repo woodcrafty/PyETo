@@ -15,19 +15,19 @@ class TestConvert(unittest.TestCase):
     def test_kelvin2celsius(self):
         self.assertEqual(pyeto.kelvin2celsius(273.15), 0.0)
 
-    def test_degrees2radians(self):
-        self.assertEqual(pyeto.degrees2radians(0), 0.0)
+    def test_deg2rad(self):
+        self.assertEqual(pyeto.deg2rad(0), 0.0)
         # Test values obtained form online conversion calculator
-        self.assertAlmostEqual(pyeto.degrees2radians(-90), -1.5707963268, 10)
-        self.assertAlmostEqual(pyeto.degrees2radians(90), 1.5707963268, 10)
-        self.assertAlmostEqual(pyeto.degrees2radians(360), 6.2831853072, 10)
+        self.assertAlmostEqual(pyeto.deg2rad(-90), -1.5707963268, 10)
+        self.assertAlmostEqual(pyeto.deg2rad(90), 1.5707963268, 10)
+        self.assertAlmostEqual(pyeto.deg2rad(360), 6.2831853072, 10)
 
-    def test_radians2degrees(self):
-        self.assertEqual(pyeto.radians2degrees(0), 0.0)
+    def test_rad2deg(self):
+        self.assertEqual(pyeto.rad2deg(0), 0.0)
         # Test values obtained form online conversion calculator
-        self.assertAlmostEqual(pyeto.radians2degrees(-1.5707963268), -90.0)
-        self.assertAlmostEqual(pyeto.radians2degrees(1.5707963268), 90.0)
-        self.assertAlmostEqual(pyeto.radians2degrees(6.2831853072), 360.0)
+        self.assertAlmostEqual(pyeto.rad2deg(-1.5707963268), -90.0)
+        self.assertAlmostEqual(pyeto.rad2deg(1.5707963268), 90.0)
+        self.assertAlmostEqual(pyeto.rad2deg(6.2831853072), 360.0)
 
 
 if __name__ == '__main__':
