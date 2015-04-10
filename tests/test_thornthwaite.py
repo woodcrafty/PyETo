@@ -1,5 +1,5 @@
 """
-Unit test script for pyeto/thornthwaite.py
+Unit test script for pyeto.thornthwaite.py
 """
 
 import unittest
@@ -34,6 +34,23 @@ class TestThornthwaite(unittest.TestCase):
         # Check that the 2 methods are almost the same (within 15 minutes)
         for m in range(12):
             self.assertAlmostEqual(mmdlh[m], la_mmdlh[m], delta=0.25)
+
+        # Test with bad latitude
+        with self.assertRaises(ValueError):
+            _ = pyeto.monthly_mean_daylight_hours(
+                pyeto.degrees2radians(90.01))
+
+        with self.assertRaises(ValueError):
+            _ = pyeto.monthly_mean_daylight_hours(
+                pyeto.degrees2radians(-90.01))
+
+        # Test limits of latitude
+        _ = pyeto.monthly_mean_daylight_hours(
+            pyeto.degrees2radians(90.0))
+
+        _ = pyeto.monthly_mean_daylight_hours(
+            pyeto.degrees2radians(-90.0))
+
 
 if __name__ == '__main__':
     unittest.main()
