@@ -123,7 +123,8 @@ class TestThornthwaite(unittest.TestCase):
             pyeto.deg2rad(-90.0))
 
     def test_thornthwaite(self):
-        # Test values obtained from a worked example provided in Google book
+        # Test values obtained from a worked example in Hydrology: An
+        # Environmental Approach, pp 435-436 by Ian Watson.
         test_monthly_t = [
             2.1, 2.5, 4.8, 7.1, 8.3, 10.7, 13.4, 14.5, 11.1, 8.2, 5.4, 3.7]
         test_monthly_mean_dlh = [
