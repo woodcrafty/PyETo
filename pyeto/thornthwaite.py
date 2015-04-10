@@ -19,7 +19,7 @@ _MONTHDAYS = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _LEAP_MONTHDAYS = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 
-def thornthwaite(monthly_t, latitude, year=None):
+def thornthwaite(monthly_t, monthly_mean_dlh, year=None):
     """
     Estimate monthly potential evapotranspiration (PET) using the
     Thornthwaite (1948) method.
@@ -40,7 +40,9 @@ def thornthwaite(monthly_t, latitude, year=None):
 
     :param monthly_t: Iterable containing mean daily air temperature for each
         month of the year [deg C].
-    :param latitude: Latitude [radians]
+    :param monthly_mean_dlh: Iterable containing mean daily daylight
+        hours for each month of the year (hours]. These can be calculated
+        using ``monthly_mean_daylight_hours()``.
     :param year: Year for which PET is required. The only effect of year is
         to change the number of days in February to 29 if it is a leap year.
         If it is left as the default (None), then the year is assumed not to
@@ -53,7 +55,10 @@ def thornthwaite(monthly_t, latitude, year=None):
         raise ValueError(
             'monthly_t should be length 12 but is length {0}.'
             .format(len(monthly_t)))
-    check_latitude_in_radians(latitude)
+    if len(monthly_mean_dlh) != 12:
+        raise ValueError(
+            'monthly_mean_dlh should be length 12 but is length {0}.'
+            .format(len(monthly_mean_dlh)))
 
     if year is None or not calendar.isleap(year):
         month_days = _MONTHDAYS
@@ -61,19 +66,18 @@ def thornthwaite(monthly_t, latitude, year=None):
         month_days = _LEAP_MONTHDAYS
 
     # Negative temperatures should be set to zero
-    monthly_t = [t * (t >= 0) for t in monthly_t]
+    adj_monthly_t = [t * (t >= 0) for t in monthly_t]
 
     # Calculate the heat index (I)
     I = 0.0
-    for Tai in monthly_t:
+    for Tai in adj_monthly_t:
         if Tai / 5.0 > 0.0:
             I += (Tai / 5.0) ** 1.514
 
     a = (6.75e-07 * I ** 3) - (7.71e-05 * I ** 2) + (1.792e-02 * I) + 0.49239
-    monthly_mean_dlh = monthly_mean_daylight_hours(latitude, year)
 
     pet = []
-    for Ta, L, N in zip(monthly_t, monthly_mean_dlh, month_days):
+    for Ta, L, N in zip(adj_monthly_t, monthly_mean_dlh, month_days):
         # Multiply by 10 to convert cm/month --> mm/month
         pet.append(
             1.6 * (L / 12.0) * (N / 30.0) * ((10.0 * Ta / I) ** a) * 10.0)
@@ -100,9 +104,9 @@ def monthly_mean_daylight_hours(latitude, year=None):
     else:
         month_days = _LEAP_MONTHDAYS
     monthly_mean_dlh = []
-    doy = 1       # Day of the year
+    doy = 1         # Day of the year
     for mdays in month_days:
-        dlh = 0   # Cumulative daylight hours
+        dlh = 0.0   # Cumulative daylight hours for the month
         for daynum in range(1, mdays + 1):
             sd = fao.solar_declination(doy)
             sha = fao.sunset_hour_angle(latitude, sd)
