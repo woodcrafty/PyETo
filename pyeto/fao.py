@@ -44,7 +44,128 @@ def atm_pressure(altitude):
     return math.pow(tmp, 5.26) * 101.3
 
 
-def clear_sky_rad(altitude, et_rad):
+def avp_from_tmin(tmin):
+    """
+    Estimate actual vapour pressure (ea) from minimum temperature.
+
+    Based on equation 48 in in Allen et al (1998). This method is to be used
+    where humidity data are lacking or are of questionable quality. The method
+    assumes that the dewpoint temperature is approximately equal to the
+    minimum temperature (*tmin*), i.e. the air is saturated with water
+    vapour at *tmin*.
+
+    NOTE: This assumption may not hold in arid/semi-arid areas.
+    In these areas it may be better to subtract 2 deg C from the
+    minimum temperature (see Annex 6 in FAO paper).
+
+    :param tmin: Daily minimum temperature [deg C]
+    :return: Actual vapour pressure [kPa]
+    :rtype: float
+    """
+    return 0.611 * math.exp((17.27 * tmin) / (tmin + 237.3))
+
+
+def avp_from_rhmin_rhmax(svp_tmin, svp_tmax, rh_min, rh_max):
+    """
+    Estimate actual vapour pressure (ea) from saturation vapour pressure and
+    relative humidity.
+
+    Based on FAO equation 17 in Allen et al (1998).
+
+    :param svp_tmin: Saturation vapour pressure at daily minimum temperature
+        [kPa]
+    :param svp_tmax: Saturation vapour pressure at daily maximum temperature
+        [kPa]
+    :param rh_min: Minimum relative humidity [%]
+    :param rh_max: Maximum relative humidity [%]
+    :return: Actual vapour pressure [kPa]
+    :rtype: float
+    """
+    tmp1 = svp_tmin * (rh_max / 100.0)
+    tmp2 = svp_tmax * (rh_min / 100.0)
+    return (tmp1 + tmp2) / 2.0
+
+
+def avp_from_rhmax(svp_tmin, rh_max):
+    """
+    Estimate actual vapour pressure (ea) from saturation vapour pressure at
+    daily minimum temperature and maximum relative humidity
+
+    Based on FAO equation 18 in Allen et al (1998).
+
+    :param svp_tmin: Saturation vapour pressure at daily minimum temperature
+        [kPa]
+    :param rh_max: Maximum relative humidity [%]
+    :return: Actual vapour pressure [kPa]
+    :rtype: float
+    """
+    return svp_tmin * (rh_max / 100.0)
+
+
+def avp_from_rhmean(svp_tmin, svp_tmax, rh_mean):
+    """
+    Estimate actual vapour pressure (ea) from saturation vapour pressure at
+    daily minimum and maximum temperature, and mean relative humidity.
+
+    Based on FAO equation 19 in Allen et al (1998).
+
+    :param svp_tmin: Saturation vapour pressure at daily minimum temperature
+        [kPa]
+    :param svp_tmax: Saturation vapour pressure at daily maximum temperature
+        [kPa]
+    :param rh_mean: Mean relative humidity [%] (average of RH min and RH max)
+    :return: Actual vapour pressure [kPa]
+    :rtype: float
+    """
+    return (rh_mean / 100.0) * ((svp_tmax + svp_tmin) / 2.0)
+
+
+def avp_from_tdew(tdew):
+    """
+    Estimate actual vapour pressure (ea) from dewpoint temperature.
+
+    Based on equation 14 in Allen et al (1998). As the dewpoint temperature is
+    the temperature to which air needs to be cooled to make it saturated, the
+    actual vapour pressure is the saturation vapour pressure at the dewpoint
+    temperature.
+
+    This method is preferable to calculating vapour pressure from
+    minimum temperature.
+
+    :param tdew: Dewpoint temperature [deg C]
+    :return: Actual vapour pressure [kPa]
+    :rtype: float
+    """
+    return 0.6108 * math.exp((17.27 * tdew) / (tdew + 237.3))
+
+
+def avp_from_twet_tdry(twet, tdry, svp_twet, psy_const):
+    """
+    Estimate actual vapour pressure (ea) from wet and dry bulb temperature.
+
+    Based on equation 15 in Allen et al (1998). As the dewpoint temperature
+    is the temperature to which air needs to be cooled to make it saturated, the
+    actual vapour pressure is the saturation vapour pressure at the dewpoint
+    temperature.
+
+    This method is preferable to calculating vapour pressure from
+    minimum temperature.
+
+    Values for the psychrometric constant of the psychrometer (*psy_const*)
+    can be calculated using ``psyc_const_of_psychrometer()``.
+
+    :param twet: Wet bulb temperature [deg C]
+    :param tdry: Dry bulb temperature [deg C]
+    :param svp_twet: Saturated vapour pressure at the wet bulb temperature
+        [kPa]
+    :param psy_const: Psychrometric constant of the pyschrometer [kPa deg C-1]
+    :return: Actual vapour pressure [kPa]
+    :rtype: float
+    """
+    return svp_twet - (psy_const * (tdry - twet))
+
+
+def cs_rad(altitude, et_rad):
     """
     Estimate clear sky radiation from altitude and extraterrestrial radiation.
 
@@ -86,7 +207,7 @@ def daylight_hours(sha):
     return (24.0 / math.pi) * sha
 
 
-def delta_sat_vap_pressure(t):
+def delta_svp(t):
     """
     Estimate the slope of the saturation vapour pressure curve at a given
     temperature.
@@ -101,121 +222,6 @@ def delta_sat_vap_pressure(t):
     """
     tmp = 4098 * (0.6108 * math.exp((17.27 * t) / (t + 237.3)))
     return tmp / math.pow((t + 237.3), 2)
-
-
-def ea_from_tmin(tmin):
-    """
-    Estimate actual vapour pressure (ea) from minimum temperature.
-
-    Based on equation 48 in in Allen et al (1998). This method is to be used
-    where humidity data are lacking or are of questionable quality. The method
-    assumes that the dewpoint temperature is approximately equal to the
-    minimum temperature (*tmin*), i.e. the air is saturated with water
-    vapour at *tmin*.
-
-    NOTE: This assumption may not hold in arid/semi-arid areas.
-    In these areas it may be better to subtract 2 deg C from the
-    minimum temperature (see Annex 6 in FAO paper).
-
-    :param tmin: Daily minimum temperature [deg C]
-    :return: Actual vapour pressure [kPa]
-    :rtype: float
-    """
-    return 0.611 * math.exp((17.27 * tmin) / (tmin + 237.3))
-
-
-def ea_from_rhmin_rhmax(e_tmin, e_tmax, rh_min, rh_max):
-    """
-    Estimate actual vapour pressure (ea) from saturation vapour pressure and
-    relative humidity.
-
-    Based on FAO equation 17 in Allen et al (1998).
-
-    :param e_tmin: Saturation vapour pressure at daily minimum temperature [kPa]
-    :param e_tmax: Saturation vapour pressure at daily maximum temperature [kPa]
-    :param rh_min: Minimum relative humidity [%]
-    :param rh_max: Maximum relative humidity [%]
-    :return: Actual vapour pressure [kPa]
-    :rtype: float
-    """
-    tmp1 = e_tmin * (rh_max / 100.0)
-    tmp2 = e_tmax * (rh_min / 100.0)
-    return (tmp1 + tmp2) / 2.0
-
-
-def ea_from_rhmax(e_tmin, rh_max):
-    """
-    Estimate actual vapour pressure (ea) from saturation vapour pressure at
-    daily minimum temperature and maximum relative humidity
-
-    Based on FAO equation 18 in Allen et al (1998).
-
-    :param e_tmin: Saturation vapour pressure at daily minimum temperature [kPa]
-    :param rh_max: Maximum relative humidity [%]
-    :return: Actual vapour pressure [kPa]
-    :rtype: float
-    """
-    return e_tmin * (rh_max / 100.0)
-
-
-def ea_from_rhmean(e_tmin, e_tmax, rh_mean):
-    """
-    Estimate actual vapour pressure (ea) from saturation vapour pressure at daily
-    minimum and maximum temperature, and mean relative humidity.
-
-    Based on FAO equation 19 in Allen et al (1998).
-
-    :param e_tmin: Saturation vapour pressure at daily minimum temperature [kPa]
-    :param e_tmax: Saturation vapour pressure at daily maximum temperature [kPa]
-    :param rh_mean: Mean relative humidity [%] (average of RH min and RH max)
-    :return: Actual vapour pressure [kPa]
-    :rtype: float
-    """
-    return (rh_mean / 100.0) * ((e_tmax + e_tmin) / 2.0)
-
-
-def ea_from_tdew(tdew):
-    """
-    Estimate actual vapour pressure (ea) from dewpoint temperature.
-
-    Based on equation 14 in Allen et al (1998). As the dewpoint temperature is
-    the temperature to which air needs to be cooled to make it saturated, the
-    actual vapour pressure is the saturation vapour pressure at the dewpoint
-    temperature.
-
-    This method is preferable to calculating vapour pressure from
-    minimum temperature.
-
-    :param tdew: Dewpoint temperature [deg C]
-    :return: Actual vapour pressure [kPa]
-    :rtype: float
-    """
-    return 0.6108 * math.exp((17.27 * tdew) / (tdew + 237.3))
-
-
-def ea_from_twet_tdry(twet, tdry, e_twet, psy_const):
-    """
-    Estimate actual vapour pressure (ea) from wet and dry bulb temperature.
-
-    Based on equation 15 in Allen et al (1998). As the dewpoint temperature
-    is the temperature to which air needs to be cooled to make it saturated, the
-    actual vapour pressure is the saturation vapour pressure at the dewpoint
-    temperature.
-
-    This method is preferable to calculating vapour pressure from
-    minimum temperature.
-
-    Values for the psychrometric constant of the psychrometer (*psy_const*)
-    can be calculated using ``psyc_const_of_psychrometer()``.
-
-    :param twet: Wet bulb temperature [deg C]
-    :param tdry: Dry bulb temperature [deg C]
-    :param e_twet: Saturated vapour pressure at the wet bulb temperature [kPa]
-    :param psy_const: Psychrometric constant of the pyschrometer [kPa deg C-1]
-    :return: Actual vapour pressure [kPa]
-    :rtype: float
-    """
-    return e_twet - (psy_const * (tdry - twet))
 
 
 def energy2evap(energy):
@@ -236,27 +242,14 @@ def energy2evap(energy):
     return 0.408 * energy
 
 
-def es_from_t(t):
-    """
-    Estimate saturation vapour pressure (es) from air temperature.
-
-    Based on equations 11 and 12 in Allen et al (1998).
-
-    :param t: Temperature [deg C]
-    :return: Saturation vapour pressure [kPa]
-    :rtype: float
-    """
-    return 0.6108 * math.exp((17.27 * t) / (t + 237.3))
-
-
-def et_rad(latitude, sd, sha, irl):
+def et_rad(latitude, sol_dec, sha, ird):
     """
     Estimate daily extraterrestrial radiation (Ra, 'top of the atmosphere
     radiation').
 
     Based on equation 21 in Allen et al (1998). If monthly mean radiation is
-    required make sure *sd*. *sha* and *irl* have been calculated using the day
-    of the year that corresponds to the middle of the month.
+    required make sure *sol_dec*. *sha* and *irl* have been calculated using
+    the day of the year that corresponds to the middle of the month.
 
     **Note**: From Allen et al (1998) "For the winter months in latitudes
     greater than 55 degrees (N or S), the equations have limited validity.
@@ -264,37 +257,37 @@ def et_rad(latitude, sd, sha, irl):
     deviations."
 
     :param latitude: Latitude [radians]
-    :param sd: Solar declination [radians]
+    :param sol_dec: Solar declination [radians]
     :param sha: Sunset hour angle [radians]
-    :param irl: Inverse relative distance earth-sun [dimensionless]
+    :param ird: Inverse relative distance earth-sun [dimensionless]
     :return: Daily extraterrestrial radiation [MJ m-2 day-1]
     :rtype: float
     """
-    # TODO: raise exceptions for sd and sha?
+    # TODO: raise exceptions for sha?
     check_latitude_rad(latitude)
     check_sol_dec_rad(latitude)
 
     # Calculate daily extraterrestrial radiation based on FAO equation 21
     tmp1 = (24.0 * 60.0) / math.pi
-    tmp2 = sha * math.sin(latitude) * math.sin(sd)
-    tmp3 = math.cos(latitude) * math.cos(sd) * math.sin(sha)
-    return tmp1 * SOLAR_CONSTANT * irl * (tmp2 + tmp3)
+    tmp2 = sha * math.sin(latitude) * math.sin(sol_dec)
+    tmp3 = math.cos(latitude) * math.cos(sol_dec) * math.sin(sha)
+    return tmp1 * SOLAR_CONSTANT * ird * (tmp2 + tmp3)
 
 
-def fao56_penman_monteith(Rn, t, ws, es, ea, delta_es, psy, shf=0.0):
+def fao56_penman_monteith(net_rad, t, ws, svp, avp, delta_svp, psy, shf=0.0):
     """
     Estimate reference evapotranspiration (ETo) from a hypothetical
     grass reference surface using t he FAO-56 Penman-Monteith equation.
 
     Based on equation 6 in Allen et al (1998).
 
-    :param Rn: Net radiation at crop surface [MJ m-2 day-1].
+    :param net_rad: Net radiation at crop surface [MJ m-2 day-1].
     :param t: Air temperature at 2 m height [deg Kelvin].
     :param ws: Wind speed at 2 m height [m s-1]. If not measured at 2m,
         convert using ``wind_speed_at_2m()``.
-    :param es: Saturation vapour pressure [kPa].
-    :param ea: Actual vapour pressure [kPa].
-    :param delta_es: Slope of vapour pressure curve [kPa  deg C].
+    :param svp: Saturation vapour pressure [kPa].
+    :param avp: Actual vapour pressure [kPa].
+    :param delta_svp Slope of saturation vapour pressure curve [kPa degC-1].
     :param psy: Psychrometric constant [kPa deg C].
     :param shf: Soil heat flux (G) [MJ m-2 day-1] (default = 0, fine for daily
         time step).
@@ -302,12 +295,14 @@ def fao56_penman_monteith(Rn, t, ws, es, ea, delta_es, psy, shf=0.0):
         grass reference surface [mm day-1].
     :rtype: float
     """
-    a1 = 0.408 * (Rn - shf) * delta_es / (delta_es + (psy * (1 + 0.34 * ws)))
-    a2 = 900 * ws / t * (es - ea) * psy / (delta_es + (psy * (1 + 0.34 * ws)))
+    a1 = (0.408 * (net_rad - shf) * delta_svp /
+          (delta_svp + (psy * (1 + 0.34 * ws))))
+    a2 = (900 * ws / t * (svp - avp) * psy /
+          (delta_svp + (psy * (1 + 0.34 * ws))))
     return a1 + a2
 
 
-def hargreaves(tmin, tmax, tmean, Ra):
+def hargreaves(tmin, tmax, tmean, et_rad):
     """
     Estimate reference evapotranspiration over grass (ETo) using the Hargreaves
     equation.
@@ -323,33 +318,33 @@ def hargreaves(tmin, tmax, tmean, Ra):
     :param tmin: Minimum daily temperature [deg C]
     :param tmax: Maximum daily temperature [deg C]
     :param tmean: Mean daily temperature [deg C]
-    :param Ra: Extraterrestrial radiation (Ra) [MJ m-2 day-1]
+    :param et_rad: Extraterrestrial radiation (Ra) [MJ m-2 day-1]
     :return: Reference evapotranspiration over grass (ETo) [mm day-1]
     :rtype: float
     """
     # Note, multiplied by 0.408 to convert extraterrestrial radiation could
     # be given in MJ m-2 day-1 rather than as equivalent evaporation in
     # mm day-1
-    return 0.0023 * (tmean + 17.8) * (tmax - tmin) ** 0.5 * 0.408 * Ra
+    return 0.0023 * (tmean + 17.8) * (tmax - tmin) ** 0.5 * 0.408 * et_rad
 
 
-def inv_rel_dist_earth_sun(doy):
+def inv_rel_dist_earth_sun(day_of_year):
     """
     Calculate the inverse relative distance between earth and sun from
     day of the year.
 
     Based on FAO equation 23 in Allen et al (1998).
 
-    :param doy: Day of year [1 to 366]
+    :param day_of_year: Day of the year/Julian day [1 to 366]
     :return: Inverse relative distance between earth and the sun
     :rtype: float
     """
-    check_doy(doy)
+    check_doy(day_of_year)
 
-    return 1 + (0.033 * math.cos((2.0 * math.pi / 365.0) * doy))
+    return 1 + (0.033 * math.cos((2.0 * math.pi / 365.0) * day_of_year))
 
 
-def mean_es(tmin, tmax):
+def mean_svp(tmin, tmax):
     """
     Estimate mean saturation vapour pressure es [kPa] from minimum and
     maximum temperature.
@@ -365,7 +360,7 @@ def mean_es(tmin, tmax):
     :return: Mean saturation vapour pressure (es) [kPa]
     :rtype: float
     """
-    return (es_from_t(tmin) + es_from_t(tmax)) / 2.0
+    return (svp_from_t(tmin) + svp_from_t(tmax)) / 2.0
 
 
 def monthly_soil_heat_flux(t_month_prev, t_month_next):
@@ -428,7 +423,7 @@ def net_in_sol_rad(sol_rad, albedo=0.23):
     return (1 - albedo) * sol_rad
 
 
-def net_out_lw_rad(tmin, tmax, sol_rad, clear_sky_rad, ea):
+def net_out_lw_rad(tmin, tmax, sol_rad, cs_rad, avp):
     """
     Estimate net outgoing longwave radiation.
 
@@ -449,15 +444,15 @@ def net_out_lw_rad(tmin, tmax, sol_rad, clear_sky_rad, ea):
     :param tmin: Absolute daily minimum temperature [degrees Kelvin]
     :param tmax: Absolute daily maximum temperature [degrees Kelvin]
     :param sol_rad: Solar radiation [MJ m-2 day-1]
-    :param clear_sky_rad: Clear sky radiation [MJ m-2 day-1]
-    :param ea: Actual vapour pressure [kPa]
+    :param cs_rad: Clear sky radiation [MJ m-2 day-1]
+    :param avp: Actual vapour pressure [kPa]
     :return: Net outgoing longwave radiation [MJ m-2 day-1]
     :rtype: float
     """
     tmp1 = (STEFAN_BOLTZMANN_CONSTANT *
         ((math.pow(tmax, 4) + math.pow(tmin, 4)) / 2))
-    tmp2 = 0.34 - (0.14 * math.sqrt(ea))
-    tmp3 = 1.35 * (sol_rad / clear_sky_rad) - 0.35
+    tmp2 = (0.34 - (0.14 * math.sqrt(avp)))
+    tmp3 = 1.35 * (sol_rad / cs_rad) - 0.35
     return tmp1 * tmp2 * tmp3
 
 
@@ -531,35 +526,36 @@ def psy_const_of_psychrometer(psychrometer, atmos_pres):
     return psy_coeff * atmos_pres
 
 
-def rh_from_ea_es(ea, es):
+def rh_from_avp_svp(avp, svp):
     """
     Calculate relative humidity as the ratio of actual vapour pressure
     to saturation vapour pressure at the same temperature.
 
     See Allen et al (1998), page 67 for details.
 
-    :param ea: Actual vapour pressure [units don't matter as long as same as
-        es].
-    :param es: Saturated vapour pressure [units don't matter as long as same as
-        ea].
+    :param avp: Actual vapour pressure [units do not matter so long as they
+        are the same as for *svp*].
+    :param svp: Saturated vapour pressure [units do not matter so long as they
+        are the same as for *avp*].
     :return: Relative humidity [%].
     :rtype: float
     """
-    return 100.0 * ea / es
+    return 100.0 * avp / svp
 
 
-def sol_dec(doy):
+def sol_dec(day_of_year):
     """
-    Calculate solar declination from day of the year.
+    Calculate solar declination from day of the year (Julian day).
 
     Based on FAO equation 24 in Allen et al (1998).
 
-    :param doy: Day of year (integer between 1 and 365 or 366).
+    :param day_of_year: Day of year/Julian day (integer between 1 and 365 or
+        366).
     :return: solar declination [radians]
     :rtype: float
     """
-    check_doy(doy)
-    return 0.409 * math.sin(((2.0 * math.pi / 365.0) * doy - 1.39))
+    check_doy(day_of_year)
+    return 0.409 * math.sin(((2.0 * math.pi / 365.0) * day_of_year - 1.39))
 
 
 def sol_rad_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
@@ -627,10 +623,10 @@ def sol_rad_from_t(et_rad, cs_rad, tmin, tmax, coastal):
     else:
         adj = 0.16
 
-    solar_rad = adj * math.sqrt(tmax - tmin) * et_rad
+    sol_rad = adj * math.sqrt(tmax - tmin) * et_rad
 
     # The solar radiation value is constrained by the clear sky radiation
-    return min(solar_rad, cs_rad)
+    return min(sol_rad, cs_rad)
 
 
 def sol_rad_island(et_rad):
@@ -655,7 +651,7 @@ def sol_rad_island(et_rad):
     return (0.7 * et_rad) - 4.0
 
 
-def sunset_hour_angle(latitude, sd):
+def sunset_hour_angle(latitude, sol_dec):
     """
     Calculate sunset hour angle (Ws) from latitude and solar
     declination.
@@ -665,20 +661,33 @@ def sunset_hour_angle(latitude, sd):
     :param latitude: Latitude [radians]. Note: *latitude* should be negative
         if it in the southern hemisphere, positive if in the northern
         hemisphere.
-    :param sd: Solar declination [radians].
+    :param sol_dec: Solar declination [radians].
     :return: Sunset hour angle [radians].
     :rtype: float
     """
     check_latitude_rad(latitude)
-    check_sol_dec_rad(sd)
+    check_sol_dec_rad(sol_dec)
 
     # Calculate sunset hour angle (sha) [radians] from latitude and solar
     # declination using FAO equation 25
-    tmp = -math.tan(latitude) * math.tan(sd)
+    tmp = -math.tan(latitude) * math.tan(sol_dec)
     # Domain of acos = -1 <= x <= 1; this is not pointed out by FAO
     tmp = max(tmp, -1.0)
     tmp = min(tmp, 1.0)
     return math.acos(tmp)
+
+
+def svp_from_t(t):
+    """
+    Estimate saturation vapour pressure (es) from air temperature.
+
+    Based on equations 11 and 12 in Allen et al (1998).
+
+    :param t: Temperature [deg C]
+    :return: Saturation vapour pressure [kPa]
+    :rtype: float
+    """
+    return 0.6108 * math.exp((17.27 * t) / (t + 237.3))
 
 
 def wind_speed_2m(meas_ws, z):

@@ -24,9 +24,9 @@ class TestFAO(unittest.TestCase):
         p = pyeto.atm_pressure(1800)
         self.assertAlmostEqual(p, 81.8, 1)
 
-    def test_clear_sky_rad(self):
+    def test_csy_rad(self):
         # Test based on example 18, p.115 of FAO paper
-        csr = pyeto.clear_sky_rad(100, 41.09)
+        csr = pyeto.cs_rad(100, 41.09)
         self.assertAlmostEqual(csr, 30.90, 2)
 
     def test_daily_mean_t(self):
@@ -38,39 +38,39 @@ class TestFAO(unittest.TestCase):
         dh = pyeto.daylight_hours(1.527)
         self.assertAlmostEqual(dh, 11.7, 1)
 
-    def test_delta_sat_vap_pressure(self):
+    def test_delta_svp(self):
         # Test based on example 17, p.111 of FAO paper
-        dh = pyeto.delta_sat_vap_pressure(30.2)
+        dh = pyeto.delta_svp(30.2)
         self.assertAlmostEqual(dh, 0.246, 3)
 
-    def test_ea_from_tmin(self):
+    def test_avp_from_tmin(self):
         # Test based on example 20, p.121 of FAO paper
-        ea = pyeto.ea_from_tmin(14.8)
-        self.assertAlmostEqual(ea, 1.68, 2)
+        avp = pyeto.avp_from_tmin(14.8)
+        self.assertAlmostEqual(avp, 1.68, 2)
 
-    def test_ea_from_rhmin_rhmax(self):
+    def test_avp_from_rhmin_rhmax(self):
         # Test based on example 5, p.72 of FAO paper
-        ea = pyeto.ea_from_rhmin_rhmax(2.064, 3.168, 54, 82)
-        self.assertAlmostEqual(ea, 1.70, 2)
+        avp = pyeto.avp_from_rhmin_rhmax(2.064, 3.168, 54, 82)
+        self.assertAlmostEqual(avp, 1.70, 2)
 
-    def test_ea_from_rhmax(self):
-        ea = pyeto.ea_from_rhmax(2.064, 82)
-        self.assertAlmostEqual(ea, 1.69, 2)
+    def test_avp_from_rhmax(self):
+        avp = pyeto.avp_from_rhmax(2.064, 82)
+        self.assertAlmostEqual(avp, 1.69, 2)
 
-    def test_ea_from_rhmean(self):
+    def test_avp_from_rhmean(self):
         # Test based on FAO example 5
-        ea = pyeto.ea_from_rhmean(2.064, 3.168, (82+54)/2.0)
-        self.assertAlmostEqual(ea, 1.78, 2)
+        avp = pyeto.avp_from_rhmean(2.064, 3.168, (82+54)/2.0)
+        self.assertAlmostEqual(avp, 1.78, 2)
 
-    def test_ea_from_tdew(self):
+    def test_avp_from_tdew(self):
         # Test based on example 20, p.121 of FAO paper
-        ea = pyeto.ea_from_tdew(14.8)
-        self.assertAlmostEqual(ea, 1.68, 2)
+        avp = pyeto.avp_from_tdew(14.8)
+        self.assertAlmostEqual(avp, 1.68, 2)
 
-    def test_ea_from_twet_tdry(self):
+    def test_avp_from_twet_tdry(self):
         # Test based on example 4, p.70 of FAO paper
-        ea = pyeto.ea_from_twet_tdry(19.5, 25.6, 2.267, 0.000662*87.9)
-        self.assertAlmostEqual(ea, 1.91, 2)
+        avp = pyeto.avp_from_twet_tdry(19.5, 25.6, 2.267, 0.000662*87.9)
+        self.assertAlmostEqual(avp, 1.91, 2)
 
     def test_et_rad(self):
         # Test based on example 8, p.80 of FAO paper
@@ -82,7 +82,7 @@ class TestFAO(unittest.TestCase):
         evap = pyeto.energy2evap(0.33)
         self.assertAlmostEqual(evap, 0.13, 2)
 
-    def test_fao_penman_monteith(self):
+    def test_fao56_penman_monteith(self):
         # Test based on example 17, p.110 (monthly calc) and
         # example 18, p.113 (daily calc) of FAO paper
 
@@ -90,12 +90,12 @@ class TestFAO(unittest.TestCase):
         # Note, due to rounding errors in the FAO's example we can only
         # test to 1 decimal place here!
         eto = pyeto.fao56_penman_monteith(
-            Rn=14.33,
+            net_rad=14.33,
             t=convert.celsius2kelvin(30.2),
             ws=2.0,
-            es=4.42,
-            ea=2.85,
-            delta_es=0.246,
+            svp=4.42,
+            avp=2.85,
+            delta_svp=0.246,
             psy=0.0674,
             shf=0.14,
         )
@@ -104,12 +104,12 @@ class TestFAO(unittest.TestCase):
         # Daily ETo:
         # (Rn, t, ws, es, ea, delta_es, psy, shf=0.0)
         eto = pyeto.fao56_penman_monteith(
-            Rn=13.28,
+            net_rad=13.28,
             t=convert.celsius2kelvin(16.9),
             ws=2.078,
-            es=1.997,
-            ea=1.409,
-            delta_es=0.122,
+            svp=1.997,
+            avp=1.409,
+            delta_svp=0.122,
             psy=0.0666
         )
         self.assertAlmostEqual(eto, 3.9, 1)
@@ -118,7 +118,7 @@ class TestFAO(unittest.TestCase):
         # Tested against worked example from "Estimating Evapotranspiration
         # from weather data" by Vishal K. Mehta, Arghyam/Cornell University,
         # Nov 2, 2006.
-        eto = pyeto.hargreaves(tmin=28, tmax=38, tmean=35, Ra=38.93715)
+        eto = pyeto.hargreaves(tmin=28, tmax=38, tmean=35, et_rad=38.93715)
         self.assertAlmostEqual(eto, 6.1, 1)
 
     def test_inv_rel_dist_earth_sun(self):
@@ -126,10 +126,10 @@ class TestFAO(unittest.TestCase):
         irl = pyeto.inv_rel_dist_earth_sun(246)
         self.assertAlmostEqual(irl, 0.985, 3)
 
-    def test_mean_es(self):
+    def test_mean_svp(self):
         # Test based on example 3, p.69 of FAO paper
-        mean_es = pyeto.mean_es(15, 24.5)
-        self.assertAlmostEqual(mean_es, 2.39, 2)
+        mean_svp = pyeto.mean_svp(15, 24.5)
+        self.assertAlmostEqual(mean_svp, 2.39, 2)
 
     def test_monthly_soil_heat_flux(self):
         # Test based on example 13, p.90 of FAO paper
@@ -155,8 +155,8 @@ class TestFAO(unittest.TestCase):
             tmin=convert.celsius2kelvin(19.1),
             tmax=convert.celsius2kelvin(25.1),
             sol_rad=14.5,
-            clear_sky_rad=18.8,
-            ea=2.1
+            cs_rad=18.8,
+            avp=2.1
         )
         self.assertAlmostEqual(lwrad, 3.5, 1)
 
@@ -189,8 +189,8 @@ class TestFAO(unittest.TestCase):
         with self.assertRaises(ValueError):
             pyeto.psy_const_of_psychrometer(4, 100)
 
-    def test_rh_from_ea_es(self):
-        rh = pyeto.rh_from_ea_es(50, 100)
+    def test_rh_from_avp_svp(self):
+        rh = pyeto.rh_from_avp_svp(50, 100)
         self.assertAlmostEqual(rh, 50.0, 1)
 
     def test_sol_dec(self):
