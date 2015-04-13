@@ -13,7 +13,7 @@ Thornthwaite CW (1948) An approach toward a rational classification of
 import calendar
 
 from . import fao
-from ._check import _check_latitude_rad
+from ._check import check_latitude_rad as _check_latitude_rad
 
 _MONTHDAYS = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _LEAP_MONTHDAYS = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
