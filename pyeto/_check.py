@@ -7,8 +7,26 @@ Internal validation functions.
 from pyeto.convert import deg2rad
 
 # Internal constants
+# Latitude
 _MINLAT_RADIANS = deg2rad(-90.0)
 _MAXLAT_RADIANS = deg2rad(90.0)
+
+# Solar declination
+_MINSOLDEC_RADIANS = deg2rad(-23.5)
+_MAXSOLDEC_RADIANS = deg2rad(23.5)
+
+# Sunset hour angle
+_MINSHA_RADIANS = 0.0
+_MAXSHA_RADIANS = deg2rad(180)
+
+
+def check_day_hours(hours, arg_name):
+    """
+    Check that *hours* is in the range 1 to 24.
+    """
+    if not 0 <= hours <= 24:
+        raise ValueError(
+            '{0} should be in range 0-24: {1!r}'.format(arg_name, hours))
 
 
 def check_doy(doy):
@@ -19,29 +37,33 @@ def check_doy(doy):
         raise ValueError(
             'Day of the year (doy) must be in range 1-366: {0!r}'.format(doy))
 
+
 def check_latitude_rad(latitude):
      if not _MINLAT_RADIANS <= latitude <= _MAXLAT_RADIANS:
         raise ValueError(
-            'latitude outside of valid range: {0!r} radians'.format(latitude))
+            'latitude outside valid range {0!r} to {1!r} rad: {2!r}'
+            .format(_MINLAT_RADIANS, _MAXLAT_RADIANS, latitude))
 
 
 def check_sol_dec_rad(sd):
     """
-    Solar declination can vary between -90 and +90 degrees, the same as
-    latitude.
+    Solar declination can vary between -23.5 and +23.5 degrees.
+
+    See http://mypages.iit.edu/~maslanka/SolarGeo.pdf
     """
-    try:
-        check_latitude_rad(sd)
-    except ValueError:
+    if not _MINSOLDEC_RADIANS <= sd <= _MAXSOLDEC_RADIANS:
         raise ValueError(
-            'solar declination outside of valid range: {0!r} radians'
-            .format(sd))
+            'solar declination outside valid range {0!r} to {1!r} rad: {2!r}'
+            .format(_MINSOLDEC_RADIANS, _MAXSOLDEC_RADIANS, sd))
 
 
-def check_day_hours(hours, arg_name):
+def check_sunset_hour_angle_rad(sha):
     """
-    Check that *hours* is in the range 1 to 24.
+    Sunset hour angle has the range 0 to 180 degrees.
+
+    See http://mypages.iit.edu/~maslanka/SolarGeo.pdf
     """
-    if not 0 <= hours <= 24:
+    if not _MINSHA_RADIANS <= sha <= _MAXSHA_RADIANS:
         raise ValueError(
-            '{0} should be in range 0-24: {1!r}'.format(arg_name, hours))
+            'sunset hour angle outside valid range {0!r} to {1!r} rad: {2!r}'
+            .format(_MINSHA_RADIANS, _MAXSHA_RADIANS, sha))
