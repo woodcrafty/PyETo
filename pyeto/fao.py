@@ -16,16 +16,16 @@ __email__ = 'mark.l.a.richardsREMOVETHIS@gmail.com'
 import math
 
 from ._check import (
-    check_day_hours,
-    check_doy,
-    check_latitude_rad,
-    check_sol_dec_rad,
+    check_day_hours as _check_day_hours,
+    check_doy as _check_doy,
+    check_latitude_rad as _check_latitude_rad,
+    check_sol_dec_rad as _check_sol_dec_rad,
+    check_sunset_hour_angle_rad as _check_sunset_hour_angle_rad,
 )
 
 # Public constants
-SOLAR_CONSTANT = 0.0820    # Solar constant [MJ m-2 min-1]
-# Stefan-Boltzmann constant [MJ K-4 m-2 day-1]
-STEFAN_BOLTZMANN_CONSTANT = 0.000000004903
+SOLAR_CONSTANT = 0.0820                     # MJ m-2 min-1
+STEFAN_BOLTZMANN_CONSTANT = 0.000000004903  # MJ K-4 m-2 day-1
 
 
 def atm_pressure(altitude):
@@ -203,7 +203,7 @@ def daylight_hours(sha):
     :return: Daylight hours.
     :rtype: float
     """
-    # TODO: Put in validation of sunset hour angle?
+    _check_sunset_hour_angle_rad(sha)
     return (24.0 / math.pi) * sha
 
 
@@ -263,11 +263,10 @@ def et_rad(latitude, sol_dec, sha, ird):
     :return: Daily extraterrestrial radiation [MJ m-2 day-1]
     :rtype: float
     """
-    # TODO: raise exceptions for sha?
-    check_latitude_rad(latitude)
-    check_sol_dec_rad(latitude)
+    _check_latitude_rad(latitude)
+    _check_sol_dec_rad(latitude)
+    _check_sunset_hour_angle_rad(sha)
 
-    # Calculate daily extraterrestrial radiation based on FAO equation 21
     tmp1 = (24.0 * 60.0) / math.pi
     tmp2 = sha * math.sin(latitude) * math.sin(sol_dec)
     tmp3 = math.cos(latitude) * math.cos(sol_dec) * math.sin(sha)
@@ -277,7 +276,7 @@ def et_rad(latitude, sol_dec, sha, ird):
 def fao56_penman_monteith(net_rad, t, ws, svp, avp, delta_svp, psy, shf=0.0):
     """
     Estimate reference evapotranspiration (ETo) from a hypothetical
-    grass reference surface using t he FAO-56 Penman-Monteith equation.
+    grass reference surface using the FAO-56 Penman-Monteith equation.
 
     Based on equation 6 in Allen et al (1998).
 
@@ -289,8 +288,8 @@ def fao56_penman_monteith(net_rad, t, ws, svp, avp, delta_svp, psy, shf=0.0):
     :param avp: Actual vapour pressure [kPa].
     :param delta_svp Slope of saturation vapour pressure curve [kPa degC-1].
     :param psy: Psychrometric constant [kPa deg C].
-    :param shf: Soil heat flux (G) [MJ m-2 day-1] (default = 0, fine for daily
-        time step).
+    :param shf: Soil heat flux (G) [MJ m-2 day-1] (default is 0.0, which is
+        reasonable for a daily time step).
     :return: Reference evapotranspiration (ETo) from a hypothetical
         grass reference surface [mm day-1].
     :rtype: float
@@ -335,12 +334,11 @@ def inv_rel_dist_earth_sun(day_of_year):
 
     Based on FAO equation 23 in Allen et al (1998).
 
-    :param day_of_year: Day of the year/Julian day [1 to 366]
+    :param day_of_year: Day of the year [1 to 366]
     :return: Inverse relative distance between earth and the sun
     :rtype: float
     """
-    check_doy(day_of_year)
-
+    _check_doy(day_of_year)
     return 1 + (0.033 * math.cos((2.0 * math.pi / 365.0) * day_of_year))
 
 
@@ -473,8 +471,6 @@ def net_rad(ni_sw_rad, no_lw_rad):
     :return: Daily net radiation [MJ m-2 day-1].
     :rtype: float
     """
-    # Raise exceptions
-    # TODO: raise exceptions for radiation arguments
     return ni_sw_rad - no_lw_rad
 
 
@@ -545,16 +541,15 @@ def rh_from_avp_svp(avp, svp):
 
 def sol_dec(day_of_year):
     """
-    Calculate solar declination from day of the year (Julian day).
+    Calculate solar declination from day of the year.
 
     Based on FAO equation 24 in Allen et al (1998).
 
-    :param day_of_year: Day of year/Julian day (integer between 1 and 365 or
-        366).
+    :param day_of_year: Day of year integer between 1 and 365 or 366).
     :return: solar declination [radians]
     :rtype: float
     """
-    check_doy(day_of_year)
+    _check_doy(day_of_year)
     return 0.409 * math.sin(((2.0 * math.pi / 365.0) * day_of_year - 1.39))
 
 
@@ -579,8 +574,8 @@ def sol_rad_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
     :return: Incoming solar (or shortwave) radiation [MJ m-2 day-1]
     :rtype: float
     """
-    check_day_hours(sunshine_hours, 'sun_hours')
-    check_day_hours(daylight_hours, 'daylight_hours')
+    _check_day_hours(sunshine_hours, 'sun_hours')
+    _check_day_hours(daylight_hours, 'daylight_hours')
 
     # 0.5 and 0.25 are default values of regression constants (Angstrom values)
     # recommended by FAO when calibrated values are unavailable.
@@ -665,16 +660,16 @@ def sunset_hour_angle(latitude, sol_dec):
     :return: Sunset hour angle [radians].
     :rtype: float
     """
-    check_latitude_rad(latitude)
-    check_sol_dec_rad(sol_dec)
+    _check_latitude_rad(latitude)
+    _check_sol_dec_rad(sol_dec)
 
-    # Calculate sunset hour angle (sha) [radians] from latitude and solar
-    # declination using FAO equation 25
-    tmp = -math.tan(latitude) * math.tan(sol_dec)
-    # Domain of acos = -1 <= x <= 1; this is not pointed out by FAO
-    tmp = max(tmp, -1.0)
-    tmp = min(tmp, 1.0)
-    return math.acos(tmp)
+    cos_sha = -math.tan(latitude) * math.tan(sol_dec)
+    # If tmp is >= 1 there is no sunset, i.e. 24 hours of daylight
+    # If tmp is <= 1 there is no sunrise, i.e. 24 hours of darkness
+    # See http://www.itacanet.org/the-sun-as-a-source-of-energy/
+    # part-3-calculating-solar-angles/
+    # Domain of acos is -1 <= x <= 1 radians (this is not mentioned in FAO-56!)
+    return math.acos(min(max(cos_sha, -1.0), 1.0))
 
 
 def svp_from_t(t):
