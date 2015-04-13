@@ -50,12 +50,12 @@ class TestCheck(unittest.TestCase):
         self.assertIsNone(_check.check_sol_dec_rad(deg2rad(-23.5)))
         self.assertIsNone(_check.check_sol_dec_rad(deg2rad(23.5)))
 
-    def test_check_sunset_hour_angle(self):
+    def test_check_sunset_hour_angle_rad(self):
         with self.assertRaises(ValueError):
-            _check.check_sunset_hour_angle(deg2rad(-0.00001))
+            _check.check_sunset_hour_angle_rad(deg2rad(-0.00001))
 
         with self.assertRaises(ValueError):
-            _check.check_sunset_hour_angle(deg2rad(180.00001))
+            _check.check_sunset_hour_angle_rad(deg2rad(180.00001))
 
-        self.assertIsNone(_check.check_sol_dec_rad(deg2rad(0.0)))
-        self.assertIsNone(_check.check_sol_dec_rad(deg2rad(180.0)))
+        self.assertIsNone(_check.check_sunset_hour_angle_rad(deg2rad(0.0)))
+        self.assertIsNone(_check.check_sunset_hour_angle_rad(deg2rad(180.0)))
