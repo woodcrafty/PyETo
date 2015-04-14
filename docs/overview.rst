@@ -4,7 +4,7 @@ Overview
 Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
 
 1. FAO Penman-Monteith (Allen et al, 1998)
-2. Hargreaves (Hargreaves and Samani, 1982; 1985)
+2. Hargreaves (Hargreaves and Samani, 1985)
 3. Thornthwaite (Thornthwaite, 1948)
 
 These methods are outlined below.
@@ -45,5 +45,5 @@ humidity.
 ------------
 Thornthwaite
 ------------
-This method estimates monthly PET using only minimum, maximum and mean monthly
-temperature, and latitude.
+This method estimates monthly PET using only mean monthly temperature and
+monthly mean daylight hours (which can be calculated from latitude).
