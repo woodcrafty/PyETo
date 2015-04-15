@@ -80,6 +80,7 @@ Functions and constants described in the FAO-56 paper (Allen et al, 1998).
 
 .. autofunction:: wind_speed_2m
 
+------------
 Thornthwaite
 ------------
 Functions related to the Thornthwaite (1948) method.
@@ -88,8 +89,9 @@ Functions related to the Thornthwaite (1948) method.
 
 .. autofunction:: thornthwaite
 
-Unit conversions
-----------------
+---------------
+Unit conversion
+---------------
 Functions for converting common units.
 
 .. autofunction:: celsius2kelvin
