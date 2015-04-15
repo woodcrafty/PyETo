@@ -1,17 +1,12 @@
 """
 Library of functions for estimating reference evapotransporation (ETo) for
-a grass reference crop using the FAO Penman-Monteith and Hargreaves
+a grass reference crop using the FAO-56 Penman-Monteith and Hargreaves
 equations. The library includes numerous functions for estimating missing
 meteorological data.
 
 :copyright: (c) 2015 by Mark Richards.
 :license: BSD 3-Clause, see LICENSE.txt for more details.
 """
-
-__license__ = 'BSD 3-clause'
-__version__ = '0.1.0'
-__author__ = 'Mark Richards'
-__email__ = 'mark.l.a.richardsREMOVETHIS@gmail.com'
 
 import math
 
@@ -23,18 +18,21 @@ from ._check import (
     check_sunset_hour_angle_rad as _check_sunset_hour_angle_rad,
 )
 
-# Public constants
-SOLAR_CONSTANT = 0.0820                     # MJ m-2 min-1
-STEFAN_BOLTZMANN_CONSTANT = 0.000000004903  # MJ K-4 m-2 day-1
+#: Solar constant [ MJ m-2 min-1]
+SOLAR_CONSTANT = 0.0820
+
+# Stefan Boltzmann constant [MJ K-4 m-2 day-1]
+STEFAN_BOLTZMANN_CONSTANT = 0.000000004903  #
+"""Stefan Boltzmann constant [MJ K-4 m-2 day-1]"""
 
 
 def atm_pressure(altitude):
     """
     Estimate atmospheric pressure from altitude.
 
-    This function uses equation (7), page 62 in Allen et al (1998). Calculated
-    using a simplification of the ideal gas law, assuming 20 deg C for a
-    standard atmosphere.
+    Calculated using a simplification of the ideal gas law, assuming 20 degrees
+    Celsius for a standard atmosphere. Based on equation 7, page 62 in Allen
+    et al (1998).
 
     :param altitude: Elevation/altitude above sea level [m]
     :return: atmospheric pressure [kPa]
@@ -48,15 +46,16 @@ def avp_from_tmin(tmin):
     """
     Estimate actual vapour pressure (ea) from minimum temperature.
 
-    Based on equation 48 in in Allen et al (1998). This method is to be used
-    where humidity data are lacking or are of questionable quality. The method
-    assumes that the dewpoint temperature is approximately equal to the
-    minimum temperature (*tmin*), i.e. the air is saturated with water
-    vapour at *tmin*.
+    This method is to be used where humidity data are lacking or are of
+    questionable quality. The method assumes that the dewpoint temperature
+    is approximately equal to the minimum temperature (*tmin*), i.e. the
+    air is saturated with water vapour at *tmin*.
 
-    NOTE: This assumption may not hold in arid/semi-arid areas.
+    **Note**: This assumption may not hold in arid/semi-arid areas.
     In these areas it may be better to subtract 2 deg C from the
     minimum temperature (see Annex 6 in FAO paper).
+
+    Based on equation 48 in Allen et al (1998).
 
     :param tmin: Daily minimum temperature [deg C]
     :return: Actual vapour pressure [kPa]
