@@ -1,15 +1,19 @@
 =============================
 FAO-56 Penman-Monteith method
 =============================
-These instructions are a very brief summary of those given in Allen et al
-(1998). It is recommended that you familiarise yourself with chapters 1 to 4
-of Allen et al (1998) before proceeding.
+This is the method recommended by the Food and Agriculture Organisation of
+the United Nations (FAO) for estimating (ET\ :sub:`o`\ ) for a short grass
+crop using limited meteorological data (see Allen et al, 1998).
 
-Apart from the site location, the FAO-56 Penman-Monteith equation requires
-air temperature, humidity, radiation and wind speed data for daily, weekly,
-ten-day or monthly calculations. It is important to verify the units of
+The FAO-56 Penman-Monteith equation requires site location, air temperature,
+humidity, radiation and wind speed data for daily, weekly, ten-day or
+monthly ET\ :sub:`o` calculations. It is important to verify the units of
 all input data.*PyETo* provides functions to convert common units to the
 standard unit (see the API of the ``pyeto.convert`` module).
+
+The instructions given below are a brief summary of those given in Allen et al
+(1998). It is recommended that you familiarise yourself with chapters 1 to 4
+of Allen et al (1998) before proceeding.
 
 -------------
 Required data
@@ -136,7 +140,6 @@ using:
    next month is available, or
 2. ``fao.monthly_soil_heat_flux2()`` if temperature for the next month is not
    available.
-
 
 ---------------------------------
 List of FAO functions by category
