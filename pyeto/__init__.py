@@ -53,8 +53,8 @@ from pyeto.thornthwaite import (
 __all__ = [
     # Unit conversions
     'celsius2kelvin',
-    'kelvin2celsius',
     'deg2rad',
+    'kelvin2celsius',
     'rad2deg',
 
     # FAO equations
