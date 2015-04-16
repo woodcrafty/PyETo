@@ -44,7 +44,7 @@ def atm_pressure(altitude):
 
 def avp_from_tmin(tmin):
     """
-    Estimate actual vapour pressure (ea) from minimum temperature.
+    Estimate actual vapour pressure (*ea*) from minimum temperature.
 
     This method is to be used where humidity data are lacking or are of
     questionable quality. The method assumes that the dewpoint temperature
@@ -66,7 +66,7 @@ def avp_from_tmin(tmin):
 
 def avp_from_rhmin_rhmax(svp_tmin, svp_tmax, rh_min, rh_max):
     """
-    Estimate actual vapour pressure (ea) from saturation vapour pressure and
+    Estimate actual vapour pressure (*ea*) from saturation vapour pressure and
     relative humidity.
 
     Based on FAO equation 17 in Allen et al (1998).
@@ -87,7 +87,7 @@ def avp_from_rhmin_rhmax(svp_tmin, svp_tmax, rh_min, rh_max):
 
 def avp_from_rhmax(svp_tmin, rh_max):
     """
-    Estimate actual vapour pressure (ea) from saturation vapour pressure at
+    Estimate actual vapour pressure (*e*a) from saturation vapour pressure at
     daily minimum temperature and maximum relative humidity
 
     Based on FAO equation 18 in Allen et al (1998).
@@ -103,7 +103,7 @@ def avp_from_rhmax(svp_tmin, rh_max):
 
 def avp_from_rhmean(svp_tmin, svp_tmax, rh_mean):
     """
-    Estimate actual vapour pressure (ea) from saturation vapour pressure at
+    Estimate actual vapour pressure (*ea*) from saturation vapour pressure at
     daily minimum and maximum temperature, and mean relative humidity.
 
     Based on FAO equation 19 in Allen et al (1998).
@@ -121,7 +121,7 @@ def avp_from_rhmean(svp_tmin, svp_tmax, rh_mean):
 
 def avp_from_tdew(tdew):
     """
-    Estimate actual vapour pressure (ea) from dewpoint temperature.
+    Estimate actual vapour pressure (*ea*) from dewpoint temperature.
 
     Based on equation 14 in Allen et al (1998). As the dewpoint temperature is
     the temperature to which air needs to be cooled to make it saturated, the
@@ -140,7 +140,7 @@ def avp_from_tdew(tdew):
 
 def avp_from_twet_tdry(twet, tdry, svp_twet, psy_const):
     """
-    Estimate actual vapour pressure (ea) from wet and dry bulb temperature.
+    Estimate actual vapour pressure (*ea*) from wet and dry bulb temperature.
 
     Based on equation 15 in Allen et al (1998). As the dewpoint temperature
     is the temperature to which air needs to be cooled to make it saturated, the
@@ -247,7 +247,7 @@ def energy2evap(energy):
 
 def et_rad(latitude, sol_dec, sha, ird):
     """
-    Estimate daily extraterrestrial radiation (Ra, 'top of the atmosphere
+    Estimate daily extraterrestrial radiation (*Ra*, 'top of the atmosphere
     radiation').
 
     Based on equation 21 in Allen et al (1998). If monthly mean radiation is
@@ -282,7 +282,7 @@ def et_rad(latitude, sol_dec, sha, ird):
 def fao56_penman_monteith(net_rad, t, ws, svp, avp, delta_svp, psy, shf=0.0):
     """
     Estimate reference evapotranspiration (ETo) from a hypothetical
-    grass reference surface using the FAO-56 Penman-Monteith equation.
+    short grass reference surface using the FAO-56 Penman-Monteith equation.
 
     Based on equation 6 in Allen et al (1998).
 
@@ -359,7 +359,7 @@ def inv_rel_dist_earth_sun(day_of_year):
 
 def mean_svp(tmin, tmax):
     """
-    Estimate mean saturation vapour pressure es [kPa] from minimum and
+    Estimate mean saturation vapour pressure, *es* [kPa] from minimum and
     maximum temperature.
 
     Based on equations 11 and 12 in Allen et al (1998).
@@ -581,8 +581,8 @@ def sol_dec(day_of_year):
 
 def sol_rad_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
     """
-    Calculate incoming solar (or shortwave) radiation (radiation hitting a
-    horizontal plane after scattering by the atmosphere) from relative
+    Calculate incoming solar (or shortwave) radiation, *Rs* (radiation hitting
+    a horizontal plane after scattering by the atmosphere) from relative
     sunshine duration.
 
     If measured radiation data are not available this method is preferable
@@ -613,7 +613,7 @@ def sol_rad_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
 
 def sol_rad_from_t(et_rad, cs_rad, tmin, tmax, coastal):
     """
-    Estimate incoming solar (or shortwave) radiation, Rs, (radiation hitting
+    Estimate incoming solar (or shortwave) radiation, *Rs*, (radiation hitting
     a horizontal plane after scattering by the atmosphere) from min and max
     temperature together with an empirical adjustment coefficient for
     'interior' and 'coastal' regions.
@@ -657,8 +657,8 @@ def sol_rad_from_t(et_rad, cs_rad, tmin, tmax, coastal):
 
 def sol_rad_island(et_rad):
     """
-    Estimate incoming solar (or shortwave) radiation (radiation hitting a
-    horizontal plane after scattering by the atmosphere) for an island
+    Estimate incoming solar (or shortwave) radiation, *Rs* (radiation hitting
+    a horizontal plane after scattering by the atmosphere) for an island
     location.
 
     An island is defined as a land mass with width perpendicular to the
@@ -680,7 +680,7 @@ def sol_rad_island(et_rad):
 
 def sunset_hour_angle(latitude, sol_dec):
     """
-    Calculate sunset hour angle (Ws) from latitude and solar
+    Calculate sunset hour angle (*Ws*) from latitude and solar
     declination.
 
     Based on FAO equation 25 in Allen et al (1998).
@@ -707,7 +707,7 @@ def sunset_hour_angle(latitude, sol_dec):
 
 def svp_from_t(t):
     """
-    Estimate saturation vapour pressure (es) from air temperature.
+    Estimate saturation vapour pressure (*es*) from air temperature.
 
     Based on equations 11 and 12 in Allen et al (1998).
 
