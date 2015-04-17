@@ -1,7 +1,6 @@
 =====
 PyETo
 =====
-
 *PyETo* is a Python package for calculating reference crop evapotranspiration
 (ET\ :sub:`o`\ ), sometimes referred to as potential evapotranspiration (PET).
 The library provides numerous functions for estimating missing meteorological
@@ -10,12 +9,12 @@ data.
 Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
 
 * FAO-56 Penman-Monteith (Allen et al, 1998)
-* Hargreaves (Hargreaves and Samani, 1982; 1985)
+* Hargreaves (Hargreaves and Samani, 1985)
 * Thornthwaite (Thornthwaite, 1948)
 
 What does it look like? Here is a simple example that estimates monthly
-potential evapotranspiration for Aberdeen, Scotland, using the
-Thorthwaite method::
+potential evapotranspiration for Aberdeen, Scotland (latitude 57.1526
+degrees N), using the Thornthwaite method::
 
    >>> import pyeto
    >>> latitude = pyeto.deg2rad(57.1526)   # Convert latitude to radians
@@ -42,14 +41,13 @@ You can install the library directly from PyPI::
 
 Documentation contents
 ----------------------
-This part of the documentation guides you through the three evapotranspiration
-methods.
+This part of the documentation guides you through the various
+evapotranspiration methods.
 
 .. toctree::
    :maxdepth: 2
 
    overview
-   quickstart
    fao56_penman_monteith
    hargreaves
    thornthwaite
