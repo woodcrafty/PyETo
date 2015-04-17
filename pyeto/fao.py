@@ -158,7 +158,7 @@ def avp_from_twet_tdry(twet, tdry, svp_twet, psy_const):
     :param svp_twet: Saturated vapour pressure at the wet bulb temperature
         [kPa]. Can be estimated using ``svp_from_t()``.
     :param psy_const: Psychrometric constant of the pyschrometer [kPa deg C-1].
-        Can be estimated using ``psy_conts()`` or
+        Can be estimated using ``psy_const()`` or
         ``psy_const_of_psychrometer()``.
     :return: Actual vapour pressure [kPa]
     :rtype: float
@@ -254,7 +254,7 @@ def et_rad(latitude, sol_dec, sha, ird):
     required make sure *sol_dec*. *sha* and *irl* have been calculated using
     the day of the year that corresponds to the middle of the month.
 
-    **Note**: From Allen et al (1998) "For the winter months in latitudes
+    **Note**: From Allen et al (1998): "For the winter months in latitudes
     greater than 55 degrees (N or S), the equations have limited validity.
     Reference should be made to the Smithsonian Tables to assess possible
     deviations."
@@ -295,8 +295,8 @@ def fao56_penman_monteith(net_rad, t, ws, svp, avp, delta_svp, psy, shf=0.0):
         ``svp_from_t()''.
     :param avp: Actual vapour pressure [kPa]. Can be estimated using a range
         of functions with names beginning with 'avp_from'.
-    :param delta_svp Slope of saturation vapour pressure curve [kPa degC-1].
-        Can be estimated using ``delta_svp()''.
+    :param delta_svp: Slope of saturation vapour pressure curve [kPa degC-1].
+        Can be estimated using ``delta_svp()``.
     :param psy: Psychrometric constant [kPa deg C]. Can be estimatred using
         ``psy_const_of_psychrometer()`` or ``psy_const()``.
     :param shf: Soil heat flux (G) [MJ m-2 day-1] (default is 0.0, which is
@@ -370,7 +370,7 @@ def mean_svp(tmin, tmax):
 
     :param tmin: Minimum temperature [deg C]
     :param tmax: Maximum temperature [deg C]
-    :return: Mean saturation vapour pressure (es) [kPa]
+    :return: Mean saturation vapour pressure (*es*) [kPa]
     :rtype: float
     """
     return (svp_from_t(tmin) + svp_from_t(tmax)) / 2.0
@@ -428,8 +428,10 @@ def net_in_sol_rad(sol_rad, albedo=0.23):
     Based on FAO equation 38 in Allen et al (1998).
 
     :param sol_rad: Gross incoming solar radiation [MJ m-2 day-1]. If
-        necessary this can be estimated using ``sol_rad()``.
-    :param albedo: Albedo of the crop [dimensionless]. Default value is 0.23,
+        necessary this can be estimated using functions whose name
+        begins with 'sol_rad_from'.
+    :param albedo: Albedo of the crop as the proportion of gross incoming solar
+        radiation that is reflected by the surface. Default value is 0.23,
         which is the value used by the FAO for a short grass reference crop.
         Albedo can be as high as 0.95 for freshly fallen snow and as low as
         0.05 for wet bare soil. A green vegetation over has an albedo of
@@ -501,8 +503,8 @@ def psy_const(atmos_pres):
     """
     Calculate the psychrometric constant.
 
-    This method assumes that the air is saturated with water vapour at T_min.
-    This assumption may not hold in arid areas.
+    This method assumes that the air is saturated with water vapour at the
+    minimum daily temperature. This assumption may not hold in arid areas.
 
     Based on equation 8, page 95 in Allen et al (1998).
 
@@ -523,11 +525,11 @@ def psy_const_of_psychrometer(psychrometer, atmos_pres):
 
     :param psychrometer: Integer between 1 and 3 which denotes type of
         psychrometer:
-            1: ventilated (Asmann or aspirated type) psychrometer with
-                an air movement of approximately 5 m/s
-            2: natural ventilated psychrometer with an air movement
-                of approximately 1 m/s
-            3: non ventilated psychrometer installed indoors
+        1. ventilated (Asmann or aspirated type) psychrometer with
+           an air movement of approximately 5 m/s
+        2. natural ventilated psychrometer with an air movement
+           of approximately 1 m/s
+        3. non ventilated psychrometer installed indoors
     :param atmos_pres: Atmospheric pressure [kPa]. Can be estimated using
         ``atm_pressure()``.
     :return: Psychrometric constant [kPa degC-1].
