@@ -26,17 +26,18 @@ def thornthwaite(monthly_t, monthly_mean_dlh, year=None):
 
     Thornthwaite equation:
 
-        PET = 1.6 (L/12) (N/30) (10Ta / I)**a
+        *PET* = 1.6 (*L*/12) (*N*/30) (10*Ta* / *I*)***a*
 
     where:
-    Ta is the mean daily air temperature [deg C, if negative use 0] of the
-        month being calculated
-    N is the number of days in the month being calculated
-    L is the mean day length [hours] of the month being calculated
-    a = (6.75 x 10-7)I**3 - (7.71 x 10-5)I**2 + (1.792 x 10-2)I + 0.49239
-    I is a heat index which depends on the 12 monthly mean temperatures and
-        is calculated as the sum of (Tai / 5)**1.514 for each month, where
-        Tai is the air temperature for each month in the year
+
+    * *Ta* is the mean daily air temperature [deg C, if negative use 0] of the
+      month being calculated
+    * *N* is the number of days in the month being calculated
+    * *L* is the mean day length [hours] of the month being calculated
+    * *a* = (6.75 x 10-7)*I***3 - (7.71 x 10-5)*I***2 + (1.792 x 10-2)*I* + 0.49239
+    * *I* is a heat index which depends on the 12 monthly mean temperatures and
+      is calculated as the sum of (*Tai* / 5)**1.514 for each month, where
+      Tai is the air temperature for each month in the year
 
     :param monthly_t: Iterable containing mean daily air temperature for each
         month of the year [deg C].
@@ -91,10 +92,11 @@ def monthly_mean_daylight_hours(latitude, year=None):
     latitude.
 
     :param latitude: Latitude [radians]
-    :param year: Year for which PET is required. The only effect of year
-        is to change the number of days in Feb to 29 if it is a leap year.
-        If left as the default, None, then a normal (non-leap) year is assumed.
-    :return: Mean daylight hours of each month of a year [hours]
+    :param year: Year for the daylight hours are required. The only effect of
+        *year* is to change the number of days in Feb to 29 if it is a leap
+        year. If left as the default, None, then a normal (non-leap) year is
+        assumed.
+    :return: Mean daily daylight hours of each month of a year [hours]
     :rtype: List of floats.
     """
     _check_latitude_rad(latitude)
