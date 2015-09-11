@@ -270,7 +270,7 @@ def et_rad(latitude, sol_dec, sha, ird):
     :rtype: float
     """
     _check_latitude_rad(latitude)
-    _check_sol_dec_rad(latitude)
+    _check_sol_dec_rad(sol_dec)
     _check_sunset_hour_angle_rad(sha)
 
     tmp1 = (24.0 * 60.0) / math.pi
