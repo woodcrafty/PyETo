@@ -36,9 +36,11 @@ TODO: complete this section
 Versions tested
 ===============
 * Python 2.7
-* Python 3.2
-* Python 3.3
 * Python 3.4
+* Python 3.5
+* Python 3.6
+* Python 3.7
+* Python 3.8
 * PyPy
 * PyPy3
 
