@@ -598,8 +598,7 @@ def sol_rad_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
 
     :param dl_hours: Number of daylight hours [hours]. Can be calculated
         using ``daylight_hours()``.
-    :param sunshine_hours: Sunshine duration [hours]. Can be calculated
-        using ``sunshine_hours()``.
+    :param sunshine_hours: Sunshine duration [hours].
     :param et_rad: Extraterrestrial radiation [MJ m-2 day-1]. Can be
         estimated using ``et_rad()``.
     :return: Incoming solar (or shortwave) radiation [MJ m-2 day-1]
