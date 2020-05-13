@@ -734,3 +734,38 @@ def wind_speed_2m(ws, z):
     :rtype: float
     """
     return ws * (4.87 / math.log((67.8 * z) - 5.42))
+
+
+if __name__ == '__main__':
+    # Example of using basic weather data to retrieve reference et for a day
+    day_of_year = 1
+    latitude = -34
+    altitude = 73
+    sol_rad = 28.1968
+    tmin = 28
+    tmax = 16.6
+    ws = 3.68568
+    avg_temp = (tmin+tmax)/2
+    t = avg_temp + 273.15
+    rh_min = 33.4
+    rh_max = 83.1
+    svp_tmin = svp_from_t(t=tmin)
+    svp_tmax = svp_from_t(t=tmax)
+    avp = avp_from_rhmin_rhmax(svp_tmin, svp_tmax, rh_min, rh_max)
+    sol_dec_val = sol_dec(day_of_year)
+    sha = sunset_hour_angle(latitude=latitude*0.01745329, sol_dec=sol_dec_val)
+    ird = inv_rel_dist_earth_sun(day_of_year)
+    et_rad_val = et_rad(latitude=latitude*0.01745329, sol_dec=sol_dec_val,
+                        sha=sha, ird=ird)
+    cs_rad_val = cs_rad(altitude, et_rad=et_rad_val)
+    ni_sw_rad = net_in_sol_rad(sol_rad, albedo=0.23)
+    no_lw_rad = net_out_lw_rad(tmin, tmax, sol_rad, cs_rad=cs_rad_val, avp=avp)
+    net_rad_val = net_rad(ni_sw_rad, no_lw_rad)
+    svp = svp_from_t(t=avg_temp)
+    delta_svp_val = delta_svp(t=avg_temp)
+    atmos_pres = atm_pressure(altitude)
+    psy = psy_const_of_psychrometer(psychrometer=2, atmos_pres=atmos_pres)
+    shf = 0.0
+    et = fao56_penman_monteith(net_rad=net_rad_val, t=t, ws=ws, svp=svp,
+                               avp=avp, delta_svp=delta_svp_val, psy=psy,
+                               shf=shf)
