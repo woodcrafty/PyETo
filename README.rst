@@ -26,7 +26,7 @@ Three methods for estimating ET\ :sub:`o`\ /PET are implemented:
 * Hargreaves (Hargreaves and Samani, 1982; 1985)
 * Thornthwaite (Thornthwaite, 1948)
 
-The documentation can be found at TODO: insert link
+The documentation can be found at https://pyeto.readthedocs.io/en/latest/index.html
 
 Installation
 ============
