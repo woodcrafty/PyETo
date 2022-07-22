@@ -20,7 +20,7 @@ degrees N), using the Thornthwaite method::
    >>> latitude = pyeto.deg2rad(57.1526)   # Convert latitude to radians
    >>> mean_monthly_temperature = [
     >>>     3.1, 3.5, 5.0, 6.7, 9.3, 12.1, 14.3, 14.1, 11.8, 8.9, 5.5, 3.8]
-   >>> monthly_mean_daylight = monthly_mean_daylight_hours(latitude)
+   >>> monthly_mean_daylight = pyeto.monthly_mean_daylight_hours(latitude)
    >>> pyeto.thornthwaite(mean_monthly_temperature, monthly_mean_daylight)
     [11.04590543317501,
      14.225860424373405,
