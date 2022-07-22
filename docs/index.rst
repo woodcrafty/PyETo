@@ -35,9 +35,9 @@ degrees N), using the Thornthwaite method::
      19.562094545836995,
      12.090183352107148]
 
-You can install the library directly from PyPI::
-
-   pip install pyeto
+Installation
+------------
+There is currently no way to install this package so you will have to include the source in your project in order to use it.
 
 Documentation contents
 ----------------------
