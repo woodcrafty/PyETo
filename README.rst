@@ -31,7 +31,7 @@ The documentation can be found at https://pyeto.readthedocs.io/en/latest/index.h
 Installation
 ============
 
-Currently there is no installation abvailable for this package so to use it you will need to incorporate the source into your projetc.
+Currently there is no installation abvailable for this package so to use it you will need to incorporate the source into your project.
 
 Versions tested
 ===============
