@@ -10,7 +10,7 @@ meteorological data.
 
 import math
 
-from ._check import (
+from pyeto._check import (
     check_day_hours as _check_day_hours,
     check_doy as _check_doy,
     check_latitude_rad as _check_latitude_rad,
@@ -143,9 +143,9 @@ def avp_from_twet_tdry(twet, tdry, svp_twet, psy_const):
     Estimate actual vapour pressure (*ea*) from wet and dry bulb temperature.
 
     Based on equation 15 in Allen et al (1998). As the dewpoint temperature
-    is the temperature to which air needs to be cooled to make it saturated, the
-    actual vapour pressure is the saturation vapour pressure at the dewpoint
-    temperature.
+    is the temperature to which air needs to be cooled to make it saturated,
+    the actual vapour pressure is the saturation vapour pressure at the
+    dewpoint temperature.
 
     This method is preferable to calculating vapour pressure from
     minimum temperature.
@@ -388,7 +388,7 @@ def monthly_soil_heat_flux(t_month_prev, t_month_next):
 
     :param t_month_prev: Mean air temperature of the previous month
         [deg Celsius]
-    :param t_month2_next: Mean air temperature of the next month [deg Celsius]
+    :param t_month_next: Mean air temperature of the next month [deg Celsius]
     :return: Monthly soil heat flux (Gmonth) [MJ m-2 day-1]
     :rtype: float
     """
@@ -472,7 +472,7 @@ def net_out_lw_rad(tmin, tmax, sol_rad, cs_rad, avp):
     :rtype: float
     """
     tmp1 = (STEFAN_BOLTZMANN_CONSTANT *
-        ((math.pow(tmax, 4) + math.pow(tmin, 4)) / 2))
+            ((math.pow(tmax, 4) + math.pow(tmin, 4)) / 2))
     tmp2 = (0.34 - (0.14 * math.sqrt(avp)))
     tmp3 = 1.35 * (sol_rad / cs_rad) - 0.35
     return tmp1 * tmp2 * tmp3
@@ -544,7 +544,8 @@ def psy_const_of_psychrometer(psychrometer, atmos_pres):
         psy_coeff = 0.001200
     else:
         raise ValueError(
-            'psychrometer should be in range 1 to 3: {0!r}'.format(psychrometer))
+            'psychrometer should be in range 1 to 3: {0!r}'.format(
+                psychrometer))
 
     return psy_coeff * atmos_pres
 
@@ -596,7 +597,7 @@ def sol_rad_from_sun_hours(daylight_hours, sunshine_hours, et_rad):
 
     Based on equations 34 and 35 in Allen et al (1998).
 
-    :param dl_hours: Number of daylight hours [hours]. Can be calculated
+    :param daylight_hours: Number of daylight hours [hours]. Can be calculated
         using ``daylight_hours()``.
     :param sunshine_hours: Sunshine duration [hours].
     :param et_rad: Extraterrestrial radiation [MJ m-2 day-1]. Can be
@@ -733,3 +734,38 @@ def wind_speed_2m(ws, z):
     :rtype: float
     """
     return ws * (4.87 / math.log((67.8 * z) - 5.42))
+
+
+if __name__ == '__main__':
+    # Example of using basic weather data to retrieve reference et for a day
+    day_of_year = 1
+    latitude = -34
+    altitude = 73
+    sol_rad = 28.1968
+    tmin = 28
+    tmax = 16.6
+    ws = 3.68568
+    avg_temp = (tmin+tmax)/2
+    t = avg_temp + 273.15
+    rh_min = 33.4
+    rh_max = 83.1
+    svp_tmin = svp_from_t(t=tmin)
+    svp_tmax = svp_from_t(t=tmax)
+    avp = avp_from_rhmin_rhmax(svp_tmin, svp_tmax, rh_min, rh_max)
+    sol_dec_val = sol_dec(day_of_year)
+    sha = sunset_hour_angle(latitude=latitude*0.01745329, sol_dec=sol_dec_val)
+    ird = inv_rel_dist_earth_sun(day_of_year)
+    et_rad_val = et_rad(latitude=latitude*0.01745329, sol_dec=sol_dec_val,
+                        sha=sha, ird=ird)
+    cs_rad_val = cs_rad(altitude, et_rad=et_rad_val)
+    ni_sw_rad = net_in_sol_rad(sol_rad, albedo=0.23)
+    no_lw_rad = net_out_lw_rad(tmin, tmax, sol_rad, cs_rad=cs_rad_val, avp=avp)
+    net_rad_val = net_rad(ni_sw_rad, no_lw_rad)
+    svp = svp_from_t(t=avg_temp)
+    delta_svp_val = delta_svp(t=avg_temp)
+    atmos_pres = atm_pressure(altitude)
+    psy = psy_const_of_psychrometer(psychrometer=2, atmos_pres=atmos_pres)
+    shf = 0.0
+    et = fao56_penman_monteith(net_rad=net_rad_val, t=t, ws=ws, svp=svp,
+                               avp=avp, delta_svp=delta_svp_val, psy=psy,
+                               shf=shf)

@@ -12,8 +12,8 @@ Thornthwaite CW (1948) An approach toward a rational classification of
 
 import calendar
 
-from . import fao
-from ._check import check_latitude_rad as _check_latitude_rad
+from pyeto import fao
+from pyeto._check import check_latitude_rad as _check_latitude_rad
 
 _MONTHDAYS = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _LEAP_MONTHDAYS = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
@@ -34,7 +34,7 @@ def thornthwaite(monthly_t, monthly_mean_dlh, year=None):
       month being calculated
     * *N* is the number of days in the month being calculated
     * *L* is the mean day length [hours] of the month being calculated
-    * *a* = (6.75 x 10-7)*I***3 - (7.71 x 10-5)*I***2 + (1.792 x 10-2)*I* + 0.49239
+    * *a*=(6.75 x 10-7)*I***3-(7.71 x 10-5)*I***2 + (1.792 x 10-2)*I* + 0.49239
     * *I* is a heat index which depends on the 12 monthly mean temperatures and
       is calculated as the sum of (*Tai* / 5)**1.514 for each month, where
       Tai is the air temperature for each month in the year
@@ -54,12 +54,12 @@ def thornthwaite(monthly_t, monthly_mean_dlh, year=None):
     """
     if len(monthly_t) != 12:
         raise ValueError(
-            'monthly_t should be length 12 but is length {0}.'
-            .format(len(monthly_t)))
+            'monthly_t should be length 12 but is length {0}.'.format(
+                len(monthly_t)))
     if len(monthly_mean_dlh) != 12:
         raise ValueError(
             'monthly_mean_dlh should be length 12 but is length {0}.'
-            .format(len(monthly_mean_dlh)))
+                .format(len(monthly_mean_dlh)))
 
     if year is None or not calendar.isleap(year):
         month_days = _MONTHDAYS
@@ -106,9 +106,9 @@ def monthly_mean_daylight_hours(latitude, year=None):
     else:
         month_days = _LEAP_MONTHDAYS
     monthly_mean_dlh = []
-    doy = 1         # Day of the year
+    doy = 1  # Day of the year
     for mdays in month_days:
-        dlh = 0.0   # Cumulative daylight hours for the month
+        dlh = 0.0  # Cumulative daylight hours for the month
         for daynum in range(1, mdays + 1):
             sd = fao.sol_dec(doy)
             sha = fao.sunset_hour_angle(latitude, sd)
